@@ -1,0 +1,13 @@
+list a = {2,3,4};
+list b = {2,3,4};
+list v = {2,3,4};
+number s = 2;
+
+if(a==2 && b==3)
+then
+{
+
+};
+else 
+{
+};
