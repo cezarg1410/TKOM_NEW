@@ -3,7 +3,7 @@ package operations;
 public enum LogicalOperator {
 
 
-	AND("&&"),OR("||"),EQUAL("=="),NEQUAL("!="),GT(">"),GE(">="),LT("<"),LE("<=");
+	AND("&&"),OR("!&&"),EQUAL("=="),NEQUAL("!="),GT(">"),GE(">="),LT("<"),LE("<=");
 	
 	String operator;
 	LogicalOperator(String operator)
@@ -15,8 +15,14 @@ public enum LogicalOperator {
 	{
 		for(LogicalOperator l : LogicalOperator.values())
 		{
-			if(l.equals(operator)) return l;
+			if(l.toString().equals(operator)) return l;
 		}
 		throw new RuntimeException("Nieprawidłowy operator");
+	}
+	
+	@Override
+	public String toString()
+	{
+		return operator;
 	}
 }

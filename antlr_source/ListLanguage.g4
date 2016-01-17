@@ -40,7 +40,7 @@ SEMI             	: 	';';
 LBRACK           	: 	'[';
 RBRACK           	:  	']';
 AND_OPERATOR		:  	'&&';
-OR_OPERATOR			:  	'||';
+OR_OPERATOR			:  	'!&&';
 
 WS					: 	[ \t\n\r]+ ->skip;
 
@@ -57,7 +57,7 @@ list_element 		: ID  LBRACK  NUMBER  RBRACK ;
 value 				: NUMBER | list_element;
 if_statement 		:  IF condition  THEN  LBRACE  (operation)*  RBRACE SEMI		
 						ELSE  LBRACE  (operation)*  RBRACE SEMI;
-condition 			: LPAREN elementary_condition  ((AND_OPERATOR | OR_OPERATOR)  elementary_condition )* RPAREN;
+condition 			: LPAREN elementary_condition  ((OR_OPERATOR | AND_OPERATOR )  elementary_condition )* RPAREN;
 
 elementary_condition : 
 					(ID LOGICAL_OPERATOR ID)

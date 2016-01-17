@@ -8,6 +8,7 @@ import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
 import antlr_classes.ListLanguageBaseVisitor;
+import antlr_classes.ListLanguageLexer;
 import antlr_classes.ListLanguageParser;
 import antlr_classes.ListLanguageParser.AssignmentContext;
 import antlr_classes.ListLanguageParser.Compilation_unitContext;
@@ -33,6 +34,11 @@ import operations.IFOperation;
 import operations.ListDeclarationOperation;
 import operations.LogicalOperator;
 import operations.NumberDeclarationOperation;
+import operations.arguments.Argument;
+import operations.arguments.ListArgument;
+import operations.arguments.ListElementInIndexArgument;
+import operations.arguments.NumberArgument;
+import operations.arguments.VariableArgument;
 
 public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
@@ -176,13 +182,28 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		IFOperation oper = new IFOperation();
 		for(Elementary_conditionContext ct : ctx.condition().elementary_condition())
 		{
-			Element<?> first = evalArgument(ct.children.get(0));
-			Element<?> second = evalArgument(ct.children.get(2));
+			Argument firstArg = getArgument(ct.children.get(0));
+			Argument secondArg = getArgument(ct.children.get(2));
+
 			LogicalOperator lo = LogicalOperator.fromString(ct.children.get(1).toString());
-			ElementaryCondition ec = new ElementaryCondition(first,lo,second);
+			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); //todo
 			oper.getConditions().add(ec);
 		}
-		
+		String and = ListLanguageLexer.VOCABULARY.getLiteralName(27).toString().substring(1, 3);
+		String or = ListLanguageLexer.VOCABULARY.getLiteralName(28).toString().substring(1, 4);
+		for(ParseTree t :ctx.condition().children)
+		{
+			if(t instanceof TerminalNode ){
+				if(t.toString().equals(and) || t.toString().equals(or))
+				{
+					oper.getOperators().add(LogicalOperator.fromString(t.toString()));
+				}
+				//&& t.toString().equals(ListLanguageLexer.VOCABULARY.getLiteralName(27).toString()))
+				
+			}
+				
+		}
+		exec.getOperations().add(oper);
 		return super.visitIf_statement(ctx);
 	}
 
@@ -198,6 +219,45 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		return super.visitElementary_condition(ctx);
 	}
 
+	
+	private Argument getArgument(ParseTree parseTree)
+	{
+		if(parseTree instanceof TerminalNode)
+		{
+			String id = parseTree.toString();
+			return new VariableArgument(id);
+		}
+		else if(parseTree instanceof ListContext)
+		{
+			ListContext l = (ListContext) parseTree;
+			ArrayList<Integer> list = new ArrayList<>();
+			for(int  i = 0 ; i<l.NUMBER().size() ; i++)
+			{
+				list.add(Integer.parseInt(l.NUMBER(i).toString()));
+			}
+			
+			return new ListArgument(list);
+			
+		}
+		else if(parseTree instanceof ValueContext)
+		{
+			ValueContext vc = (ValueContext) parseTree;
+			if(vc.NUMBER() != null)
+			{
+				return new NumberArgument(Integer.parseInt(vc.NUMBER().toString()));
+			}
+			else
+			{
+				return new ListElementInIndexArgument(vc.list_element().ID().toString(),Integer.parseInt(vc.list_element().NUMBER().toString()));
+				
+			}
+		}
+		else {
+			return null;
+			//TODO function_call
+		}
+	}
+	
 	private Element<?> evalArgument(ParseTree parseTree) {
 		
 		if(parseTree instanceof TerminalNode)

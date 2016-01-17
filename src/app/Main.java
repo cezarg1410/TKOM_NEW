@@ -31,7 +31,7 @@ public class Main {
 			new EvalVisitor(parser,exec).visit(tree);
 			
 			exec.run();
-			exec.print();
+			//exec.print();
 			//exec.runProgram();
 //			Iterator it = exec.getGlobalVariables().entrySet().iterator();
 //		    while (it.hasNext()) {

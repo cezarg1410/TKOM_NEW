@@ -92,24 +92,8 @@ public class Executor {
 	}
 	
 	public Integer getIntegerFromListIndex(String id, Integer index)
-	{
-		
-		Element<?> elem; 
-		if(getCalledFunctions().size() == 0)
-		{
-			elem = getGlobalVariables().get(id);
-		}
-		else
-		{
-			elem = getCalledFunctions().getLast().getLocalVariables().get(id);
-		}
-		if(elem instanceof ListElement)
-		{
-			ListElement le = (ListElement) elem;
-			return le.getContent().get(index);
-		}
-		throw new RuntimeException("Błąd przy wyłuskaniu elementu z listy");
-		
+	{	
+		return getListElement(id).getContent().get(index);	
 	}
 
 }

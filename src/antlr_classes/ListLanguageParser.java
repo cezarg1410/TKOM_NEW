@@ -41,7 +41,7 @@ public class ListLanguageParser extends Parser {
 		null, "'<EOF>'", "'if'", "'then'", "'else'", "'var'", "'foreach'", "'in'", 
 		"'@'", "'print'", "'number'", null, "'list'", "'return'", null, null, 
 		null, null, "'='", "'('", "')'", "'{'", "'}'", "','", "';'", "'['", "']'", 
-		"'&&'", "'||'"
+		"'&&'", "'!&&'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
 		null, null, "IF", "THEN", "ELSE", "VAR", "FOREACH", "IN", "AT", "PRINT", 
@@ -791,13 +791,13 @@ public class ListLanguageParser extends Parser {
 			return getRuleContext(Elementary_conditionContext.class,i);
 		}
 		public TerminalNode RPAREN() { return getToken(ListLanguageParser.RPAREN, 0); }
-		public List<TerminalNode> AND_OPERATOR() { return getTokens(ListLanguageParser.AND_OPERATOR); }
-		public TerminalNode AND_OPERATOR(int i) {
-			return getToken(ListLanguageParser.AND_OPERATOR, i);
-		}
 		public List<TerminalNode> OR_OPERATOR() { return getTokens(ListLanguageParser.OR_OPERATOR); }
 		public TerminalNode OR_OPERATOR(int i) {
 			return getToken(ListLanguageParser.OR_OPERATOR, i);
+		}
+		public List<TerminalNode> AND_OPERATOR() { return getTokens(ListLanguageParser.AND_OPERATOR); }
+		public TerminalNode AND_OPERATOR(int i) {
+			return getToken(ListLanguageParser.AND_OPERATOR, i);
 		}
 		public ConditionContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
