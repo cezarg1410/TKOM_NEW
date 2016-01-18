@@ -21,6 +21,7 @@ public class IFOperation extends Operation{
 	private ArrayList<ElementaryCondition> conditions;
 	private ArrayList<LogicalOperator> operators;
 	private ArrayList<Boolean> scores;
+	private boolean result;
 	
 	@Override
 	public void perform(Executor exec) {
@@ -46,9 +47,25 @@ public class IFOperation extends Operation{
 			}
 		}
 		System.out.println("WYNIK TO: " + res);
-		
+		this.result = res;
+		execute(exec);
 	}
 
+	public void execute(Executor exec)
+	{
+		if(result)
+		{
+			for(Operation o : thenOperations)
+				o.perform(exec);
+		}
+		else
+		{
+			for(Operation o : elseOperations)
+				o.perform(exec);
+		}
+	}
+	
+	
 	public ArrayList<ElementaryCondition> getConditions() {
 		return conditions;
 	}
@@ -59,6 +76,14 @@ public class IFOperation extends Operation{
 
 	public ArrayList<LogicalOperator> getOperators() {
 		return operators;
+	}
+
+	public LinkedList<Operation> getThenOperations() {
+		return thenOperations;
+	}
+
+	public LinkedList<Operation> getElseOperations() {
+		return elseOperations;
 	}
 	
 	

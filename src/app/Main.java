@@ -31,15 +31,8 @@ public class Main {
 			new EvalVisitor(parser,exec).visit(tree);
 			
 			exec.run();
-			//exec.print();
-			//exec.runProgram();
-//			Iterator it = exec.getGlobalVariables().entrySet().iterator();
-//		    while (it.hasNext()) {
-//		        Map.Entry pair = (Map.Entry)it.next();
-//		        System.out.println(pair.getKey() + " = " + pair.getValue());
-//		        it.remove(); // avoids a ConcurrentModificationException
-//		    }
-			int a =2;
+			exec.print();
+
 		
 		} catch (IOException e) {
 			e.printStackTrace();

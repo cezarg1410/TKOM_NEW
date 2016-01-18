@@ -34,6 +34,7 @@ import operations.IFOperation;
 import operations.ListDeclarationOperation;
 import operations.LogicalOperator;
 import operations.NumberDeclarationOperation;
+import operations.Operation;
 import operations.arguments.Argument;
 import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
@@ -52,8 +53,31 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		
 	}
 
+	boolean shouldAddToOperations(ParseTree ctx)
+	{
+		boolean res = true;
+		while(true)
+		{
+			if(ctx.getParent() != null)
+			{
+				if( ctx.getParent() instanceof If_statementContext)
+					res = false;
+			}
+			else
+				break;
+			ctx = ctx.getParent();
+		}
+		return res;
+	}
 	@Override
 	public Integer visitAssignment(AssignmentContext ctx)
+	{
+		if(shouldAddToOperations(ctx))
+			mVisitAssignment(ctx);
+		return super.visitAssignment(ctx);
+	}
+	
+	public void mVisitAssignment(AssignmentContext ctx)
 	{
 		String id = ctx.ID().toString();
 		if(ctx.list() != null)
@@ -79,44 +103,32 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		{
 			//TODO function_call
 		}
-		
-		return super.visitAssignment(ctx);
-		
-	}
-	
-	@Override
-	public Integer visitCompilation_unit(Compilation_unitContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitCompilation_unit(ctx);
-	}
-
-	@Override
-	public Integer visitOperation(OperationContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitOperation(ctx);
 	}
 
 	@Override
 	public Integer visitNumerical_var_dec(Numerical_var_decContext ctx) {
-		
+		if(shouldAddToOperations(ctx))
+			mVisitNumericalVarDec(ctx);
+		return super.visitNumerical_var_dec(ctx);
+	}
+	
+	public void mVisitNumericalVarDec(Numerical_var_decContext ctx)
+	{
 		String id = ctx.ID().toString();
 		Integer val = null;
 		if(ctx.NUMBER() != null)
 		{
-				val = Integer.parseInt(ctx.NUMBER().toString());
+			val = Integer.parseInt(ctx.NUMBER().toString());
 		}
 		else if(ctx.list_element() != null)
 		{
-			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString());
-			
+			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString());	
 		}
 		else
 		{
 			//TODO function_call
 		}
-		
 		exec.getOperations().add(new NumberDeclarationOperation(id,val));
-		return super.visitNumerical_var_dec(ctx);
 	}
 
 	private Integer getListElement(String id, String number) {
@@ -137,7 +149,15 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 	}
 
 	@Override
-	public Integer visitList_var_dec(List_var_decContext ctx) {
+	public Integer visitList_var_dec(List_var_decContext ctx) 
+	{
+		if(shouldAddToOperations(ctx))
+			mVisitListVarDec(ctx);
+		return super.visitList_var_dec(ctx);
+	}
+
+	public void mVisitListVarDec(List_var_decContext ctx)
+	{
 		String id = ctx.ID().toString(); 
 		ArrayList<Integer> content = new ArrayList<>();
 		if(ctx.list() != null)
@@ -145,40 +165,34 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 			for(int i = 0 ; i<ctx.list().NUMBER().size(); i++)
 			{
 				content.add(Integer.parseInt(ctx.list().NUMBER(i).toString()));
-			}
-			
+			}		
 		}
-	
 		else
 		{
 			//TODO function_CALL
 		}
-		
 		exec.getOperations().add(new ListDeclarationOperation(id,content));
-		return super.visitList_var_dec(ctx);
 	}
-
-	@Override
-	public Integer visitList(ListContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitList(ctx);
-	}
-
-	@Override
-	public Integer visitList_element(List_elementContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitList_element(ctx);
-	}
-
-	@Override
-	public Integer visitValue(ValueContext ctx) {
-		// TODO Auto-generated method stub5
-		return super.visitValue(ctx);
-	}
+	
+//	@Override
+//	public Integer visitList(ListContext ctx) {
+//		return super.visitList(ctx);
+//	}
+//
+//	@Override
+//	public Integer visitList_element(List_elementContext ctx) {
+//		return super.visitList_element(ctx);
+//	}
+//
+//	@Override
+//	public Integer visitValue(ValueContext ctx) {
+//		return super.visitValue(ctx);
+//	}
 
 	@Override
 	public Integer visitIf_statement(If_statementContext ctx) {
-
+		if(!shouldAddToOperations(ctx))
+			return super.visitIf_statement(ctx);
 		IFOperation oper = new IFOperation();
 		for(Elementary_conditionContext ct : ctx.condition().elementary_condition())
 		{
@@ -198,15 +212,94 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 				{
 					oper.getOperators().add(LogicalOperator.fromString(t.toString()));
 				}
-				//&& t.toString().equals(ListLanguageLexer.VOCABULARY.getLiteralName(27).toString()))
-				
 			}
-				
 		}
-		exec.getOperations().add(oper);
+		evalIfStatementOperations(ctx,oper);
+		
+		exec.getOperations().add(oper);	
+		
 		return super.visitIf_statement(ctx);
 	}
 
+	public void evalIfStatementOperations(If_statementContext ctx, IFOperation oper)
+	{
+		for(OperationContext op : ctx.then_block().operation())
+		{
+			oper.getThenOperations().add(evalIfStatemntOperation(op));
+		}
+		for(OperationContext op : ctx.else_block().operation())
+		{
+			oper.getElseOperations().add(evalIfStatemntOperation(op));
+		}
+	}
+	public Operation evalIfStatemntOperation(OperationContext op)
+	{
+		if(op.list_var_dec() != null)
+		{
+			String id = op.list_var_dec().toString(); 
+			ArrayList<Integer> content = new ArrayList<>();
+			if(op.list_var_dec().list() != null)
+			{
+				for(int i = 0 ; i<op.list_var_dec().list().NUMBER().size(); i++)
+				{
+					content.add(Integer.parseInt(op.list_var_dec().list().NUMBER(i).toString()));
+				}		
+			}
+			else
+			{
+				//TODO function_CALL
+			}
+			return new ListDeclarationOperation(id,content);
+		}
+		else if(op.numerical_var_dec() != null)
+		{
+			String id = op.numerical_var_dec().ID().toString();
+			Integer val = null;
+			if(op.numerical_var_dec().NUMBER() != null)
+			{
+				val = Integer.parseInt(op.numerical_var_dec().NUMBER().toString());
+			}
+			else if(op.numerical_var_dec().list_element() != null)
+			{
+				val = getListElement(op.numerical_var_dec().list_element().ID().toString(),op.numerical_var_dec().list_element().NUMBER().toString());	
+			}
+			else
+			{
+				//TODO function_call
+			}
+			return new NumberDeclarationOperation(id,val);
+		}
+		else if(op.assignment() != null)
+		{
+			String id = op.assignment().ID().toString();
+			if(op.assignment().list() != null)
+			{
+				ArrayList<Integer> content = new ArrayList<>();
+				for(int i = 0 ; i<op.assignment().list().NUMBER().size(); i++)
+				{
+					content.add(Integer.parseInt(op.assignment().list().NUMBER(i).toString()));
+				}
+				return new AssignmentOperation(id,new ListElement(content));
+			}
+			else if (op.assignment().list_element() != null)
+			{
+				Integer val = getListElement(op.assignment().list_element().ID().toString(), op.assignment().list_element().NUMBER().toString());
+				return new AssignmentOperation(id,new NumberElement(val));
+			}
+			else if(op.assignment().NUMBER() != null)
+			{
+				Integer val = Integer.parseInt(op.assignment().NUMBER().toString());
+				return new AssignmentOperation(id,new NumberElement(val));
+			}
+			else 
+			{
+				//TODO function_call 
+			}
+		}
+		return null;
+	}
+	
+	
 	@Override
 	public Integer visitCondition(ConditionContext ctx) {
 		// TODO Auto-generated method stub
@@ -257,44 +350,6 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 			//TODO function_call
 		}
 	}
-	
-	private Element<?> evalArgument(ParseTree parseTree) {
-		
-		if(parseTree instanceof TerminalNode)
-		{
-			String id = parseTree.toString();
-			return exec.getVar(id);
-		}
-		else if(parseTree instanceof ListContext)
-		{
-			ListContext l = (ListContext) parseTree;
-			ArrayList<Integer> list = new ArrayList<>();
-			for(int  i = 0 ; i<l.NUMBER().size() ; i++)
-			{
-				list.add(Integer.parseInt(l.NUMBER(i).toString()));
-			}
-			ListElement elem = new ListElement(list);
-			return elem;
-			
-		}
-		else if(parseTree instanceof ValueContext)
-		{
-			ValueContext vc = (ValueContext) parseTree;
-			if(vc.NUMBER() != null)
-			{
-				return new NumberElement(Integer.parseInt(vc.NUMBER().toString()));
-			}
-			else
-			{
-				return new NumberElement(exec.getIntegerFromListIndex(vc.list_element().ID().toString(), Integer.parseInt(vc.list_element().NUMBER().toString())));
-			}
-		}
-		else {
-			return null;
-			//TODO function_call
-		}
-		
-	}
 
 	@Override
 	public Integer visitFunction_def(Function_defContext ctx) {
@@ -314,141 +369,17 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		return super.visitLoop(ctx);
 	}
 
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	@Override
-	protected Integer aggregateResult(Integer aggregate, Integer nextResult) {
-		// TODO Auto-generated method stub
-		return super.aggregateResult(aggregate, nextResult);
-	}
-
-	@Override
-	protected Integer defaultResult() {
-		// TODO Auto-generated method stub
-		return super.defaultResult();
-	}
-
-	@Override
-	protected boolean shouldVisitNextChild(RuleNode node, Integer currentResult) {
-		// TODO Auto-generated method stub
-		return super.shouldVisitNextChild(node, currentResult);
-	}
-
-	@Override
-	public Integer visit(ParseTree tree) {
-		// TODO Auto-generated method stub
-		return super.visit(tree);
-	}
-
-	@Override
-	public Integer visitChildren(RuleNode arg0) {
-		// TODO Auto-generated method stub
-		return super.visitChildren(arg0);
-	}
 
 	@Override
 	public Integer visitErrorNode(ErrorNode node) {
 		// TODO Auto-generated method stub
 		return super.visitErrorNode(node);
 	}
-
+	
 	@Override
-	public Integer visitTerminal(TerminalNode node) {
+	public Integer visitChildren(RuleNode arg0) {
 		// TODO Auto-generated method stub
-		return super.visitTerminal(node);
+		return super.visitChildren(arg0);
 	}
 
-	@Override
-	public int hashCode() {
-		// TODO Auto-generated method stub
-		return super.hashCode();
-	}
-
-	@Override
-	public boolean equals(Object obj) {
-		// TODO Auto-generated method stub
-		return super.equals(obj);
-	}
-
-	@Override
-	protected Object clone() throws CloneNotSupportedException {
-		// TODO Auto-generated method stub
-		return super.clone();
-	}
-
-	@Override
-	public String toString() {
-		// TODO Auto-generated method stub
-		return super.toString();
-	}
-
-	@Override
-	protected void finalize() throws Throwable {
-		// TODO Auto-generated method stub
-		super.finalize();
-	}
-//	public FunctionArgument<?> evalCallFuncArgument(Function_call_argContext ctx)
-//	{
-//		if(ctx.value() != null)
-//		{
-//			if(ctx.value().NUMBER() != null)
-//			{
-//				return new IntegerArgument(Integer.parseInt(ctx.value().NUMBER().toString()));
-//			}
-//			else 
-//			{
-//				Element<?> elem; 
-//				if(currentFunction != null)
-//				{
-//					elem = currentFunction.getLocalVariables().get(ctx.value().list_element().ID());
-//					if(elem == null)
-//						elem =  getGlobalVariables().get(ctx.value().list_element().ID());
-//				}
-//				else
-//				{
-//					elem =  getGlobalVariables().get(ctx.value().list_element().ID());
-//				}
-//				if(elem == null)
-//					throw new LackOfVariableException(ctx);	
-//				ArrayList<Integer> con = (ArrayList<Integer>) elem.getContent();
-//				return new IntegerArgument(con.get(Integer.parseInt(ctx.value().list_element().NUMBER().toString())));				
-//			}
-//			
-//		}
-//		else
-//		{
-//			Element<?> elem; 
-//			if(currentFunction != null)
-//			{
-//				elem = currentFunction.getLocalVariables().get(ctx.ID().toString());
-//				if(elem == null)
-//					elem =  getGlobalVariables().get(ctx.value().list_element().ID());
-//			}
-//			else
-//			{
-//				elem =  getGlobalVariables().get(ctx.ID().toString());
-//			}
-//			if(elem == null)
-//				throw new LackOfVariableException(ctx);	
-//			if(elem.getContent() instanceof Integer)
-//			{
-//				return new IntegerArgument((Integer)elem.getContent());
-//			}
-//			ArrayList<Integer> con = (ArrayList<Integer>) elem.getContent();
-//			return new ListArgument(con);
-//		}
-//
-//		
-	//}
 }

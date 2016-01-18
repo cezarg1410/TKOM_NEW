@@ -46,7 +46,7 @@ WS					: 	[ \t\n\r]+ ->skip;
 
 assignment			: ID ASSIGN (list | list_element | NUMBER | function_call);
 compilation_unit 	: operation*  '<EOF>';
-operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op;
+operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment;
 return_op:			RETURN return_arg  ;
 
 numerical_var_dec 	: NUMERICAL_VAR_OP  ID  ASSIGN  (NUMBER | function_call | list_element) SEMI;
@@ -55,8 +55,16 @@ list 				: LBRACE NUMBER (COMA NUMBER)* RBRACE;
 list_element 		: ID  LBRACK  NUMBER  RBRACK ;
 
 value 				: NUMBER | list_element;
-if_statement 		:  IF condition  THEN  LBRACE  (operation)*  RBRACE SEMI		
-						ELSE  LBRACE  (operation)*  RBRACE SEMI;
+if_statement 		:  (IF condition  
+						then_block		
+						else_block )
+						| 
+						(IF condition  
+						then_block);
+						
+then_block			: THEN LBRACE (operation)* RBRACE SEMI;
+else_block			: ELSE LBRACE (operation)* RBRACE SEMI;
+
 condition 			: LPAREN elementary_condition  ((OR_OPERATOR | AND_OPERATOR )  elementary_condition )* RPAREN;
 
 elementary_condition : 

@@ -73,6 +73,18 @@ public interface ListLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitIf_statement(ListLanguageParser.If_statementContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#then_block}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitThen_block(ListLanguageParser.Then_blockContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#else_block}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElse_block(ListLanguageParser.Else_blockContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#condition}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
