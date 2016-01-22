@@ -1,32 +1,13 @@
-package execution;
+package parserAndLexer.recognizer;
 
 import java.util.ArrayList;
 
-import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
-import antlr_classes.ListLanguageBaseVisitor;
-import antlr_classes.ListLanguageLexer;
-import antlr_classes.ListLanguageParser;
-import antlr_classes.ListLanguageParser.AssignmentContext;
-import antlr_classes.ListLanguageParser.Compilation_unitContext;
-import antlr_classes.ListLanguageParser.ConditionContext;
-import antlr_classes.ListLanguageParser.Elementary_conditionContext;
-import antlr_classes.ListLanguageParser.Function_callContext;
-import antlr_classes.ListLanguageParser.Function_defContext;
-import antlr_classes.ListLanguageParser.If_statementContext;
-import antlr_classes.ListLanguageParser.ListContext;
-import antlr_classes.ListLanguageParser.List_elementContext;
-import antlr_classes.ListLanguageParser.List_var_decContext;
-import antlr_classes.ListLanguageParser.LoopContext;
-import antlr_classes.ListLanguageParser.Numerical_var_decContext;
-import antlr_classes.ListLanguageParser.OperationContext;
-import antlr_classes.ListLanguageParser.ValueContext;
-import elements.Element;
 import elements.ListElement;
 import elements.NumberElement;
+import execution.Executor;
 import operations.AssignmentOperation;
 import operations.ElementaryCondition;
 import operations.FunctionCall;
@@ -40,44 +21,26 @@ import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
 import operations.arguments.VariableArgument;
+import parserAndLexer.ListLanguageLexer;
+import parserAndLexer.ListLanguageParser.AssignmentContext;
+import parserAndLexer.ListLanguageParser.Elementary_conditionContext;
+import parserAndLexer.ListLanguageParser.If_statementContext;
+import parserAndLexer.ListLanguageParser.ListContext;
+import parserAndLexer.ListLanguageParser.List_var_decContext;
+import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
+import parserAndLexer.ListLanguageParser.OperationContext;
+import parserAndLexer.ListLanguageParser.ValueContext;
 
-public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
-
-	public ListLanguageParser parser;
-	public Executor exec;
+public class Helper {
 	
-	public EvalVisitor(ListLanguageParser parser, Executor exec)
-	{
+	Executor exec;
+	
+
+	public Helper(Executor exec) {
 		this.exec = exec;
-		this.parser = parser;
-		
 	}
 
-	boolean shouldAddToOperations(ParseTree ctx)
-	{
-		boolean res = true;
-		while(true)
-		{
-			if(ctx.getParent() != null)
-			{
-				if( ctx.getParent() instanceof If_statementContext)
-					res = false;
-			}
-			else
-				break;
-			ctx = ctx.getParent();
-		}
-		return res;
-	}
-	@Override
-	public Integer visitAssignment(AssignmentContext ctx)
-	{
-		if(shouldAddToOperations(ctx))
-			mVisitAssignment(ctx);
-		return super.visitAssignment(ctx);
-	}
-	
-	public void mVisitAssignment(AssignmentContext ctx)
+	public void visitAssignment(AssignmentContext ctx)
 	{
 		String id = ctx.ID().toString();
 		if(ctx.list() != null)
@@ -104,15 +67,8 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 			//TODO function_call
 		}
 	}
-
-	@Override
-	public Integer visitNumerical_var_dec(Numerical_var_decContext ctx) {
-		if(shouldAddToOperations(ctx))
-			mVisitNumericalVarDec(ctx);
-		return super.visitNumerical_var_dec(ctx);
-	}
 	
-	public void mVisitNumericalVarDec(Numerical_var_decContext ctx)
+	public void visitNumericalVarDec(Numerical_var_decContext ctx)
 	{
 		String id = ctx.ID().toString();
 		Integer val = null;
@@ -130,6 +86,9 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		}
 		exec.getOperations().add(new NumberDeclarationOperation(id,val));
 	}
+	
+	
+
 
 	private Integer getListElement(String id, String number) {
 		if(exec.getCalledFunctions().size() == 0)
@@ -147,16 +106,8 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 			return e.getContent().get(Integer.parseInt(number));
 		}
 	}
-
-	@Override
-	public Integer visitList_var_dec(List_var_decContext ctx) 
-	{
-		if(shouldAddToOperations(ctx))
-			mVisitListVarDec(ctx);
-		return super.visitList_var_dec(ctx);
-	}
-
-	public void mVisitListVarDec(List_var_decContext ctx)
+	
+	public void visitListVarDec(List_var_decContext ctx)
 	{
 		String id = ctx.ID().toString(); 
 		ArrayList<Integer> content = new ArrayList<>();
@@ -174,64 +125,6 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		exec.getOperations().add(new ListDeclarationOperation(id,content));
 	}
 	
-//	@Override
-//	public Integer visitList(ListContext ctx) {
-//		return super.visitList(ctx);
-//	}
-//
-//	@Override
-//	public Integer visitList_element(List_elementContext ctx) {
-//		return super.visitList_element(ctx);
-//	}
-//
-//	@Override
-//	public Integer visitValue(ValueContext ctx) {
-//		return super.visitValue(ctx);
-//	}
-
-	@Override
-	public Integer visitIf_statement(If_statementContext ctx) {
-		if(!shouldAddToOperations(ctx))
-			return super.visitIf_statement(ctx);
-		IFOperation oper = new IFOperation();
-		for(Elementary_conditionContext ct : ctx.condition().elementary_condition())
-		{
-			Argument firstArg = getArgument(ct.children.get(0));
-			Argument secondArg = getArgument(ct.children.get(2));
-
-			LogicalOperator lo = LogicalOperator.fromString(ct.children.get(1).toString());
-			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); //todo
-			oper.getConditions().add(ec);
-		}
-		String and = ListLanguageLexer.VOCABULARY.getLiteralName(27).toString().substring(1, 3);
-		String or = ListLanguageLexer.VOCABULARY.getLiteralName(28).toString().substring(1, 4);
-		for(ParseTree t :ctx.condition().children)
-		{
-			if(t instanceof TerminalNode ){
-				if(t.toString().equals(and) || t.toString().equals(or))
-				{
-					oper.getOperators().add(LogicalOperator.fromString(t.toString()));
-				}
-			}
-		}
-		evalIfStatementOperations(ctx,oper);
-		
-		exec.getOperations().add(oper);	
-		
-		return super.visitIf_statement(ctx);
-	}
-
-	public void evalIfStatementOperations(If_statementContext ctx, IFOperation oper)
-	{
-		for(OperationContext op : ctx.then_block().operation())
-		{
-			oper.getThenOperations().add(evalIfStatemntOperation(op));
-		}
-		for(OperationContext op : ctx.else_block().operation())
-		{
-			oper.getElseOperations().add(evalIfStatemntOperation(op));
-		}
-	}
 	public Operation evalIfStatemntOperation(OperationContext op)
 	{
 		if(op.list_var_dec() != null)
@@ -300,19 +193,6 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 	}
 	
 	
-	@Override
-	public Integer visitCondition(ConditionContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitCondition(ctx);
-	}
-
-	@Override
-	public Integer visitElementary_condition(Elementary_conditionContext ctx) {
-
-		return super.visitElementary_condition(ctx);
-	}
-
-	
 	private Argument getArgument(ParseTree parseTree)
 	{
 		if(parseTree instanceof TerminalNode)
@@ -351,35 +231,46 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		}
 	}
 
-	@Override
-	public Integer visitFunction_def(Function_defContext ctx) {
+	public void visitIfStatement(If_statementContext ctx) {
+		IFOperation oper = new IFOperation();
+		for(Elementary_conditionContext ct : ctx.condition().elementary_condition())
+		{
+			Argument firstArg = getArgument(ct.children.get(0));
+			Argument secondArg = getArgument(ct.children.get(2));
 
-		return super.visitFunction_def(ctx);
-	}
-
-	@Override
-	public Integer visitFunction_call(Function_callContext ctx) {
-
-		return super.visitFunction_call(ctx);
-	}
-
-	@Override
-	public Integer visitLoop(LoopContext ctx) {
-
-		return super.visitLoop(ctx);
-	}
-
-
-	@Override
-	public Integer visitErrorNode(ErrorNode node) {
-		// TODO Auto-generated method stub
-		return super.visitErrorNode(node);
+			LogicalOperator lo = LogicalOperator.fromString(ct.children.get(1).toString());
+			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); //todo
+			oper.getConditions().add(ec);
+		}
+		String and = ListLanguageLexer.VOCABULARY.getLiteralName(27).toString().substring(1, 3);
+		String or = ListLanguageLexer.VOCABULARY.getLiteralName(28).toString().substring(1, 4);
+		for(ParseTree t :ctx.condition().children)
+		{
+			if(t instanceof TerminalNode ){
+				if(t.toString().equals(and) || t.toString().equals(or))
+				{
+					oper.getOperators().add(LogicalOperator.fromString(t.toString()));
+				}
+			}
+		}
+		evalIfStatementOperations(ctx,oper);
+		
+		exec.getOperations().add(oper);	
+		
 	}
 	
-	@Override
-	public Integer visitChildren(RuleNode arg0) {
-		// TODO Auto-generated method stub
-		return super.visitChildren(arg0);
+
+	public void evalIfStatementOperations(If_statementContext ctx, IFOperation oper)
+	{
+		for(OperationContext op : ctx.then_block().operation())
+		{
+			oper.getThenOperations().add(evalIfStatemntOperation(op));
+		}
+		for(OperationContext op : ctx.else_block().operation())
+		{
+			oper.getElseOperations().add(evalIfStatemntOperation(op));
+		}
 	}
 
+	
 }

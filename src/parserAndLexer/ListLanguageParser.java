@@ -1,6 +1,6 @@
 // Generated from ListLanguage.g4 by ANTLR 4.5.1
 
-    package antlr_classes;
+    package parserAndLexer;
 
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;

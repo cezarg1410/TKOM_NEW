@@ -1,11 +1,9 @@
 package execution;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
-import com.sun.xml.internal.bind.v2.schemagen.xmlschema.List;
 
 import elements.Element;
 import elements.ListElement;
@@ -19,7 +17,7 @@ public class Executor {
 	private LinkedList<Operation> operations;
 	private LinkedList<FunctionCall> calledFunctions;
 	private HashMap<String, Element<?>> globalVariables;
-
+	
 	public Executor()
 	{
 		operations = new LinkedList<>();

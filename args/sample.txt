@@ -3,6 +3,23 @@ list b = {2,3,4,5};
 list v = {2,3,4};
 number s = 2;
 
+
+@sampleFunction(list a, list b)
+{
+	if(a[2] == 3)
+	then {
+		number z = 3;
+	};
+	else
+	{
+		number z = 6;
+	};
+
+
+};
+
+
+
 if(a==b !&& b[3]==5 !&& s==2 && v[0]==3)
 then
 {
