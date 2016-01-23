@@ -6,6 +6,7 @@ import java.util.List;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import elements.Element;
 import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
@@ -245,7 +246,7 @@ public class Helper {
 		String id = ctx.ID().toString();
 		for(int i = 0 ; i < ctx.function_def_arg().size() ; i++)
 		{
-			fc.getArgs().add(Utils.getArgument(ctx.function_def_arg(i)));
+			fc.getArgs().add(ctx.function_def_arg(i).ID().toString());
 		}
 		for(int i = 0 ; i<ctx.operation().size() ; i++)
 		{
@@ -287,12 +288,26 @@ public class Helper {
 	public void visitFunctionCall(Function_callContext ctx, List<Operation> container) {
 		String id = ctx.ID().toString();
 		ArrayList<String> args = new ArrayList<>();
+		FunctionDefinition fd = exec.getFunctions().get(id);
+		FunctionCall fc = new FunctionCall(fd,id);
+		
+		fc.setId(id);
 		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
 		{
-			args.add(ctx.function_call_arg(i).ID().toString());
+			fc.getArgs().add(Utils.getArgument(ctx.function_call_arg(i).children.get(0)));
 		}
 		
-		FunctionCall fc = new FunctionCall(id);
+		
+//		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
+//		{
+//			args.add(ctx.function_call_arg(i).ID().toString());
+//		}
+//		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
+//		{
+//			fc.getArgs().add(Utils.getArgument(ctx.function_call_arg(i)));
+//		}
+//		
+		
 		container.add(fc);
  	}
 	

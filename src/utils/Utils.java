@@ -15,6 +15,7 @@ import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
 import operations.arguments.VariableArgument;
+import parserAndLexer.ListLanguageParser.Function_callContext;
 import parserAndLexer.ListLanguageParser.ListContext;
 import parserAndLexer.ListLanguageParser.ValueContext;
 
@@ -83,5 +84,10 @@ public class Utils {
 			return null;
 			//TODO function_call
 		}
+	}
+	public static Argument getFunCallArgument(Function_callContext ctx)
+	{
+		return null;
+		
 	}
 }

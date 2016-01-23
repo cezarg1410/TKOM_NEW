@@ -8,7 +8,7 @@ import operations.arguments.Argument;
 
 public class FunctionDefinition{
 
-	public ArrayList<Argument> args;
+	public ArrayList<String> args;
 	public LinkedList<Operation> operations;
 	
 	public FunctionDefinition()
@@ -18,10 +18,10 @@ public class FunctionDefinition{
 	}
 	
 	
-	public ArrayList<Argument> getArgs() {
+	public ArrayList<String> getArgs() {
 		return args;
 	}
-	public void setArgs(ArrayList<Argument> args) {
+	public void setArgs(ArrayList<String> args) {
 		this.args = args;
 	}
 	public LinkedList<Operation> getOperations() {

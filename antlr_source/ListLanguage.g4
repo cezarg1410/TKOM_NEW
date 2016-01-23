@@ -102,6 +102,6 @@ function_call		: (ID  LPAREN function_call_arg (COMA function_call_arg)* RPAREN)
 					| (ID LPAREN RPAREN);
 		
 function_def_arg:  ((NUMERICAL_VAR_OP  ID) | (LIST_VAR_OP  ID));
-function_call_arg :	value | ID | function_call;
+function_call_arg :	list | value | ID | function_call;
 loop				: FOREACH  LPAREN  VAR  IN  ID  RPAREN  LBRACE  operation *  RBRACE SEMI; 
 return_arg			: ID;

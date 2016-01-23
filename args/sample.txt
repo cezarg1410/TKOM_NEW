@@ -5,7 +5,7 @@ FUNCTIONS
 		if(a[2] == 3)
 		then 
 		{
-			number z = 3;
+			number z = 32;
 		};
 		else
 		{
@@ -18,17 +18,10 @@ FUNCTIONS
 PROGRAM
 {
 	list a = {2,3,3,3};
-	if(a[2] == 3)
-		then 
-		{
-			number z = 3;
-		};
-		else
-		{
-			number z = 6;
-		};
+
 	
 	number c = 3;
+	sampleFunction(a,{2,3,4});
 };
 
 
