@@ -1,10 +1,12 @@
 package parserAndLexer.recognizer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
 import execution.Executor;
@@ -24,12 +26,15 @@ import operations.arguments.VariableArgument;
 import parserAndLexer.ListLanguageLexer;
 import parserAndLexer.ListLanguageParser.AssignmentContext;
 import parserAndLexer.ListLanguageParser.Elementary_conditionContext;
+import parserAndLexer.ListLanguageParser.Function_callContext;
+import parserAndLexer.ListLanguageParser.Function_defContext;
 import parserAndLexer.ListLanguageParser.If_statementContext;
 import parserAndLexer.ListLanguageParser.ListContext;
 import parserAndLexer.ListLanguageParser.List_var_decContext;
 import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
 import parserAndLexer.ListLanguageParser.OperationContext;
 import parserAndLexer.ListLanguageParser.ValueContext;
+import utils.Utils;
 
 public class Helper {
 	
@@ -40,7 +45,7 @@ public class Helper {
 		this.exec = exec;
 	}
 
-	public void visitAssignment(AssignmentContext ctx)
+	public void visitAssignment(AssignmentContext ctx, List<Operation> container)
 	{
 		String id = ctx.ID().toString();
 		if(ctx.list() != null)
@@ -50,17 +55,17 @@ public class Helper {
 			{
 				content.add(Integer.parseInt(ctx.list().NUMBER(i).toString()));
 			}
-			exec.getOperations().add(new AssignmentOperation(id,new ListElement(content)));
+			container.add(new AssignmentOperation(id,new ListElement(content)));
 		}
 		else if (ctx.list_element() != null)
 		{
-			Integer val = getListElement(ctx.list_element().ID().toString(), ctx.list_element().NUMBER().toString());
-			exec.getOperations().add(new AssignmentOperation(id,new NumberElement(val)));
+			Integer val = getListElement(ctx.list_element().ID().toString(), ctx.list_element().NUMBER().toString(),container);
+			container.add(new AssignmentOperation(id,new NumberElement(val)));
 		}
 		else if(ctx.NUMBER() != null)
 		{
 			Integer val = Integer.parseInt(ctx.NUMBER().toString());
-			exec.getOperations().add(new AssignmentOperation(id,new NumberElement(val)));
+			container.add(new AssignmentOperation(id,new NumberElement(val)));
 		}
 		else 
 		{
@@ -68,7 +73,7 @@ public class Helper {
 		}
 	}
 	
-	public void visitNumericalVarDec(Numerical_var_decContext ctx)
+	public void visitNumericalVarDec(Numerical_var_decContext ctx, List<Operation> container)
 	{
 		String id = ctx.ID().toString();
 		Integer val = null;
@@ -78,19 +83,19 @@ public class Helper {
 		}
 		else if(ctx.list_element() != null)
 		{
-			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString());	
+			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString(),container);	
 		}
 		else
 		{
 			//TODO function_call
 		}
-		exec.getOperations().add(new NumberDeclarationOperation(id,val));
+		container.add(new NumberDeclarationOperation(id,val));
 	}
 	
 	
 
 
-	private Integer getListElement(String id, String number) {
+	private Integer getListElement(String id, String number, List<Operation> container) {
 		if(exec.getCalledFunctions().size() == 0)
 		{
 			ListElement e = (ListElement) exec.getGlobalVariables().get(id);
@@ -107,7 +112,7 @@ public class Helper {
 		}
 	}
 	
-	public void visitListVarDec(List_var_decContext ctx)
+	public void visitListVarDec(List_var_decContext ctx, List<Operation> container)
 	{
 		String id = ctx.ID().toString(); 
 		ArrayList<Integer> content = new ArrayList<>();
@@ -122,10 +127,10 @@ public class Helper {
 		{
 			//TODO function_CALL
 		}
-		exec.getOperations().add(new ListDeclarationOperation(id,content));
+		container.add(new ListDeclarationOperation(id,content));
 	}
 	
-	public Operation evalIfStatemntOperation(OperationContext op)
+	public Operation evalIfStatemntOperation(OperationContext op, List<Operation> container)
 	{
 		if(op.list_var_dec() != null)
 		{
@@ -154,7 +159,7 @@ public class Helper {
 			}
 			else if(op.numerical_var_dec().list_element() != null)
 			{
-				val = getListElement(op.numerical_var_dec().list_element().ID().toString(),op.numerical_var_dec().list_element().NUMBER().toString());	
+				val = getListElement(op.numerical_var_dec().list_element().ID().toString(),op.numerical_var_dec().list_element().NUMBER().toString(),container);	
 			}
 			else
 			{
@@ -176,7 +181,7 @@ public class Helper {
 			}
 			else if (op.assignment().list_element() != null)
 			{
-				Integer val = getListElement(op.assignment().list_element().ID().toString(), op.assignment().list_element().NUMBER().toString());
+				Integer val = getListElement(op.assignment().list_element().ID().toString(), op.assignment().list_element().NUMBER().toString(),container);
 				return new AssignmentOperation(id,new NumberElement(val));
 			}
 			else if(op.assignment().NUMBER() != null)
@@ -192,51 +197,13 @@ public class Helper {
 		return null;
 	}
 	
-	
-	private Argument getArgument(ParseTree parseTree)
-	{
-		if(parseTree instanceof TerminalNode)
-		{
-			String id = parseTree.toString();
-			return new VariableArgument(id);
-		}
-		else if(parseTree instanceof ListContext)
-		{
-			ListContext l = (ListContext) parseTree;
-			ArrayList<Integer> list = new ArrayList<>();
-			for(int  i = 0 ; i<l.NUMBER().size() ; i++)
-			{
-				list.add(Integer.parseInt(l.NUMBER(i).toString()));
-			}
-			
-			return new ListArgument(list);
-			
-		}
-		else if(parseTree instanceof ValueContext)
-		{
-			ValueContext vc = (ValueContext) parseTree;
-			if(vc.NUMBER() != null)
-			{
-				return new NumberArgument(Integer.parseInt(vc.NUMBER().toString()));
-			}
-			else
-			{
-				return new ListElementInIndexArgument(vc.list_element().ID().toString(),Integer.parseInt(vc.list_element().NUMBER().toString()));
-				
-			}
-		}
-		else {
-			return null;
-			//TODO function_call
-		}
-	}
 
-	public void visitIfStatement(If_statementContext ctx) {
+	public void visitIfStatement(If_statementContext ctx, List<Operation> container) {
 		IFOperation oper = new IFOperation();
 		for(Elementary_conditionContext ct : ctx.condition().elementary_condition())
 		{
-			Argument firstArg = getArgument(ct.children.get(0));
-			Argument secondArg = getArgument(ct.children.get(2));
+			Argument firstArg = Utils.getArgument(ct.children.get(0));
+			Argument secondArg = Utils.getArgument(ct.children.get(2));
 
 			LogicalOperator lo = LogicalOperator.fromString(ct.children.get(1).toString());
 			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); //todo
@@ -253,24 +220,83 @@ public class Helper {
 				}
 			}
 		}
-		evalIfStatementOperations(ctx,oper);
+		evalIfStatementOperations(ctx,oper,container);
 		
-		exec.getOperations().add(oper);	
+		container.add(oper);	
 		
 	}
 	
 
-	public void evalIfStatementOperations(If_statementContext ctx, IFOperation oper)
+	public void evalIfStatementOperations(If_statementContext ctx, IFOperation oper, List<Operation> container)
 	{
 		for(OperationContext op : ctx.then_block().operation())
 		{
-			oper.getThenOperations().add(evalIfStatemntOperation(op));
+			oper.getThenOperations().add(evalIfStatemntOperation(op,container));
 		}
 		for(OperationContext op : ctx.else_block().operation())
 		{
-			oper.getElseOperations().add(evalIfStatemntOperation(op));
+			oper.getElseOperations().add(evalIfStatemntOperation(op,container));
 		}
 	}
+
+	public void createFunctionDefinition(Function_defContext ctx, List<Operation> container) {
+		
+		FunctionDefinition fc = new FunctionDefinition();
+		String id = ctx.ID().toString();
+		for(int i = 0 ; i < ctx.function_def_arg().size() ; i++)
+		{
+			fc.getArgs().add(Utils.getArgument(ctx.function_def_arg(i)));
+		}
+		for(int i = 0 ; i<ctx.operation().size() ; i++)
+		{
+			createAndGetOperation(ctx.operation(i),fc.getOperations());
+		}
+		exec.getFunctions().put(id, fc);
+		
+	}
+	
+	
+	
+	public void createAndGetOperation(OperationContext ctx, List<Operation> container)
+	{
+		if(ctx.list_var_dec() != null)
+		{
+			visitListVarDec(ctx.list_var_dec(),container);
+		}
+		else if(ctx.numerical_var_dec() != null)
+		{
+			visitNumericalVarDec(ctx.numerical_var_dec(), container);
+		}
+		else if(ctx.if_statement() != null)
+		{
+			visitIfStatement(ctx.if_statement(), container);
+		}
+		else if(ctx.loop() != null)
+		{
+			
+		}
+		else if(ctx.function_call() != null)
+		{
+			
+		}
+		else
+			throw new RuntimeException();
+		
+	}
+
+	public void visitFunctionCall(Function_callContext ctx, List<Operation> container) {
+		String id = ctx.ID().toString();
+		ArrayList<String> args = new ArrayList<>();
+		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
+		{
+			args.add(ctx.function_call_arg(i).ID().toString());
+		}
+		
+		FunctionCall fc = new FunctionCall(id);
+		container.add(fc);
+ 	}
+	
+	
 
 	
 }

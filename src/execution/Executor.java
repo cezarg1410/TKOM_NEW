@@ -6,6 +6,7 @@ import java.util.Map;
 
 
 import elements.Element;
+import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
 import operations.FunctionCall;
@@ -17,12 +18,13 @@ public class Executor {
 	private LinkedList<Operation> operations;
 	private LinkedList<FunctionCall> calledFunctions;
 	private HashMap<String, Element<?>> globalVariables;
-	
+	private HashMap<String, FunctionDefinition> functions;
 	public Executor()
 	{
 		operations = new LinkedList<>();
 		calledFunctions = new LinkedList<>();
-		globalVariables = new HashMap<String, Element<?>>();
+		globalVariables = new HashMap<>();
+		functions = new HashMap<>();
 		
 	}
 	
@@ -49,6 +51,14 @@ public class Executor {
 	public void setCalledFunctions(LinkedList<FunctionCall> calledFunctions) {
 		this.calledFunctions = calledFunctions;
 	}
+	
+	public HashMap<String, FunctionDefinition> getFunctions() {
+		return functions;
+	}
+
+	public void setFunctions(HashMap<String, FunctionDefinition> functions) {
+		this.functions = functions;
+	}
 
 	public void run()
 	{
@@ -63,6 +73,11 @@ public class Executor {
 		for (Map.Entry<String, Element<?>> entry : globalVariables.entrySet())
 		{
 		    System.out.println(entry.getKey() + "/" + entry.getValue());
+		}
+		
+		for(Map.Entry<String, FunctionDefinition> entry : functions.entrySet())
+		{
+			System.out.println(entry.toString());
 		}
 	}
 	

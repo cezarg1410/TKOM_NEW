@@ -12,6 +12,7 @@ import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
 import operations.arguments.VariableArgument;
+import utils.Utils;
 
 public class ElementaryCondition {
 
@@ -108,43 +109,8 @@ public class ElementaryCondition {
 
 	private void calcArgs(Executor exec) 
 	{
-		calcArg(true,leftArg,exec);
-		calcArg(false,rightArg,exec);
+		left = Utils.calcArgument(leftArg, exec);
+		right = Utils.calcArgument(rightArg, exec);
 	}
 
-
-
-	private void calcArg(boolean left, Argument arg, Executor exec) 
-	{
-		Element<?> elem = null;
-		if(arg instanceof FunCallArgument)
-		{
-			//TODO fun_call
-		}
-		else if(arg instanceof ListArgument)
-		{
-			elem = new ListElement(((ListArgument) arg).getContent());
-		}
-		else if(arg instanceof ListElementInIndexArgument)
-		{
-			elem  = new NumberElement(exec.getIntegerFromListIndex(((ListElementInIndexArgument) arg).getId(), ((ListElementInIndexArgument) arg).getIndex()));
-		}
-		else if(arg instanceof NumberArgument)
-		{
-			elem  = new NumberElement(((NumberArgument) arg).getNumber());
-		}
-		else if(arg instanceof VariableArgument)
-		{
-			elem = exec.getVar(((VariableArgument) arg).getVarId());
-		}
-		if(left)
-		{
-			this.left = elem;
-		}
-		else
-		{
-			this.right = elem;
-		}
-		
-	}
 }

@@ -13,17 +13,23 @@ import org.antlr.v4.runtime.tree.ParseTreeVisitor;
  */
 public interface ListLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	/**
-	 * Visit a parse tree produced by {@link ListLanguageParser#assignment}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitAssignment(ListLanguageParser.AssignmentContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#compilation_unit}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitCompilation_unit(ListLanguageParser.Compilation_unitContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#function_defs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunction_defs(ListLanguageParser.Function_defsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#assignment}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitAssignment(ListLanguageParser.AssignmentContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#operation}.
 	 * @param ctx the parse tree

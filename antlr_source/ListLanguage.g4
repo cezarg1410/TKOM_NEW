@@ -4,7 +4,7 @@
 grammar ListLanguage;
  
 @header {
-    package antlr_classes;
+    package parserAndLexer;
 }
 
 IF					:	'if';
@@ -21,6 +21,8 @@ BOOLEAN 			: 	'true' | 'false';
 
 LIST_VAR_OP			: 	'list';
 RETURN				:   'return';
+FUNCTIONS			:	'FUNCTIONS';
+PROGRAM				:	'PROGRAM';
 
 fragment 
 	LETTER: [a-z|A-Z];
@@ -44,8 +46,10 @@ OR_OPERATOR			:  	'!&&';
 
 WS					: 	[ \t\n\r]+ ->skip;
 
+
+compilation_unit 	: function_defs PROGRAM LBRACE operation* RBRACE SEMI;
+function_defs		:  FUNCTIONS LBRACE function_def* RBRACE SEMI;
 assignment			: ID ASSIGN (list | list_element | NUMBER | function_call);
-compilation_unit 	: operation*  '<EOF>';
 operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment;
 return_op:			RETURN return_arg  ;
 
@@ -98,6 +102,6 @@ function_call		: (ID  LPAREN function_call_arg (COMA function_call_arg)* RPAREN)
 					| (ID LPAREN RPAREN);
 		
 function_def_arg:  ((NUMERICAL_VAR_OP  ID) | (LIST_VAR_OP  ID));
-function_call_arg :	value | ID | VAR;
+function_call_arg :	value | ID | function_call;
 loop				: FOREACH  LPAREN  VAR  IN  ID  RPAREN  LBRACE  operation *  RBRACE SEMI; 
 return_arg			: ID;

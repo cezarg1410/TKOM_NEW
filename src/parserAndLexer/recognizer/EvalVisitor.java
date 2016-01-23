@@ -12,6 +12,7 @@ import parserAndLexer.ListLanguageParser.ConditionContext;
 import parserAndLexer.ListLanguageParser.Elementary_conditionContext;
 import parserAndLexer.ListLanguageParser.Function_callContext;
 import parserAndLexer.ListLanguageParser.Function_defContext;
+import parserAndLexer.ListLanguageParser.Function_defsContext;
 import parserAndLexer.ListLanguageParser.If_statementContext;
 import parserAndLexer.ListLanguageParser.List_var_decContext;
 import parserAndLexer.ListLanguageParser.LoopContext;
@@ -37,7 +38,7 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		{
 			if(ctx.getParent() != null)
 			{
-				if( ctx.getParent() instanceof If_statementContext || ctx.getParent() instanceof Function_defContext)
+				if( ctx.getParent() instanceof If_statementContext || ctx.getParent() instanceof Function_defsContext)
 					res = false;
 			}
 			else
@@ -50,14 +51,14 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 	public Integer visitAssignment(AssignmentContext ctx)
 	{
 		if(shouldAddToOperations(ctx))
-			helper.visitAssignment(ctx);
+			helper.visitAssignment(ctx,exec.getOperations());
 		return super.visitAssignment(ctx);
 	}
 
 	@Override
 	public Integer visitNumerical_var_dec(Numerical_var_decContext ctx) {
 		if(shouldAddToOperations(ctx))
-			helper.visitNumericalVarDec(ctx);
+			helper.visitNumericalVarDec(ctx,exec.getOperations());
 		return super.visitNumerical_var_dec(ctx);
 	}
 
@@ -66,18 +67,24 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 	public Integer visitList_var_dec(List_var_decContext ctx) 
 	{
 		if(shouldAddToOperations(ctx))
-			helper.visitListVarDec(ctx);
+			helper.visitListVarDec(ctx,exec.getOperations());
 		return super.visitList_var_dec(ctx);
 	}
 
 	@Override
 	public Integer visitIf_statement(If_statementContext ctx) {
 		if(shouldAddToOperations(ctx))
-			helper.visitIfStatement(ctx);
+			helper.visitIfStatement(ctx,exec.getOperations());
 		return super.visitIf_statement(ctx);
 
 	}
 
+	@Override
+	public Integer visitFunction_def(Function_defContext ctx) {
+		helper.createFunctionDefinition(ctx,exec.getOperations());
+		return super.visitFunction_def(ctx);
+	}
+	
 	
 //	@Override
 //	public Integer visitList(ListContext ctx) {
@@ -109,16 +116,10 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 	}
 
 
-
-	@Override
-	public Integer visitFunction_def(Function_defContext ctx) {
-
-		return super.visitFunction_def(ctx);
-	}
-
 	@Override
 	public Integer visitFunction_call(Function_callContext ctx) {
 
+		helper.visitFunctionCall(ctx,exec.getOperations());
 		return super.visitFunction_call(ctx);
 	}
 
