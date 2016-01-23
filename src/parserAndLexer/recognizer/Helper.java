@@ -1,6 +1,7 @@
 package parserAndLexer.recognizer;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -17,6 +18,7 @@ import operations.FunctionCall;
 import operations.IFOperation;
 import operations.ListDeclarationOperation;
 import operations.LogicalOperator;
+import operations.LoopOperation;
 import operations.NumberDeclarationOperation;
 import operations.Operation;
 import operations.arguments.Argument;
@@ -32,6 +34,7 @@ import parserAndLexer.ListLanguageParser.Function_defContext;
 import parserAndLexer.ListLanguageParser.If_statementContext;
 import parserAndLexer.ListLanguageParser.ListContext;
 import parserAndLexer.ListLanguageParser.List_var_decContext;
+import parserAndLexer.ListLanguageParser.LoopContext;
 import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
 import parserAndLexer.ListLanguageParser.OperationContext;
 import parserAndLexer.ListLanguageParser.ValueContext;
@@ -210,8 +213,8 @@ public class Helper {
 			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); //todo
 			oper.getConditions().add(ec);
 		}
-		String and = ListLanguageLexer.VOCABULARY.getLiteralName(27).toString().substring(1, 3);
-		String or = ListLanguageLexer.VOCABULARY.getLiteralName(28).toString().substring(1, 4);
+		String and = ListLanguageLexer.VOCABULARY.getLiteralName(26).toString().substring(1, 3);
+		String or = ListLanguageLexer.VOCABULARY.getLiteralName(27).toString().substring(1, 4);
 		for(ParseTree t :ctx.condition().children)
 		{
 			if(t instanceof TerminalNode ){
@@ -310,6 +313,18 @@ public class Helper {
 		
 		container.add(fc);
  	}
+
+	public void visitLoop(LoopContext ctx, LinkedList<Operation> operations) {
+		Argument arg = Utils.getArgument(ctx.value());
+		LoopOperation lo = new LoopOperation(arg);
+		
+		for(int i = 0 ; i < ctx.operation().size() ; i++)
+		{
+			createAndGetOperation(ctx.operation(i),lo.getOperations());
+		}
+		
+		
+	}
 	
 	
 

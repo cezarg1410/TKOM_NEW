@@ -83,13 +83,16 @@ public class Executor {
 	
 	public Element<?> getVar(String id)
 	{
+		Element<?> res = null;
 		if(calledFunctions.size() !=0)
 		{
-			return calledFunctions.getLast().getLocalVariables().get(id);
+			res = calledFunctions.getLast().getLocalVariables().get(id);
 		}
-		if(getGlobalVariables().get(id) == null)
+		if(res == null)
+			res = getGlobalVariables().get(id);
+		if(res == null)
 			throw new RuntimeException("Brak takiej zmiennej !!");
-		return getGlobalVariables().get(id);
+		return res;
 	}
 	
 	public ListElement getListElement(String id)

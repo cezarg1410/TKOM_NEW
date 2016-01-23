@@ -10,10 +10,8 @@ grammar ListLanguage;
 IF					:	'if';
 THEN				:   'then';
 ELSE				:  	'else';
-VAR					: 	'var';
-FOREACH				: 	'foreach';
 
-IN					:  	'in';
+
 AT					:  	'@';
 PRINT				:  	'print';
 NUMERICAL_VAR_OP 	: 	'number';
@@ -23,6 +21,8 @@ LIST_VAR_OP			: 	'list';
 RETURN				:   'return';
 FUNCTIONS			:	'FUNCTIONS';
 PROGRAM				:	'PROGRAM';
+LOOP				: 	'LOOP';
+ 
 
 fragment 
 	LETTER: [a-z|A-Z];
@@ -103,5 +103,6 @@ function_call		: (ID  LPAREN function_call_arg (COMA function_call_arg)* RPAREN)
 		
 function_def_arg:  ((NUMERICAL_VAR_OP  ID) | (LIST_VAR_OP  ID));
 function_call_arg :	list | value | ID | function_call;
-loop				: FOREACH  LPAREN  VAR  IN  ID  RPAREN  LBRACE  operation *  RBRACE SEMI; 
+loop				: LOOP  LPAREN  value RPAREN  LBRACE  operation *  RBRACE SEMI;
+
 return_arg			: ID;

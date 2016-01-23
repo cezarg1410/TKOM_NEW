@@ -5,6 +5,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.RuleNode;
 
 import execution.Executor;
+import operations.LoopOperation;
+import operations.arguments.Argument;
 import parserAndLexer.ListLanguageBaseVisitor;
 import parserAndLexer.ListLanguageParser;
 import parserAndLexer.ListLanguageParser.AssignmentContext;
@@ -17,6 +19,7 @@ import parserAndLexer.ListLanguageParser.If_statementContext;
 import parserAndLexer.ListLanguageParser.List_var_decContext;
 import parserAndLexer.ListLanguageParser.LoopContext;
 import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
+import utils.Utils;
 
 public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
@@ -124,7 +127,7 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitLoop(LoopContext ctx) {
-
+		helper.visitLoop(ctx,exec.getOperations());
 		return super.visitLoop(ctx); //TODO
 	}
 

@@ -39,6 +39,7 @@ public class FunctionCall extends Operation {
 
 	@Override
 	public void perform(Executor exec) {
+		exec.getCalledFunctions().addFirst(this);
 		fd = exec.getFunctions().get(id);
 		if (fd == null)
 			throw new RuntimeException();
@@ -47,7 +48,7 @@ public class FunctionCall extends Operation {
 		{
 			o.perform(exec);
 		}
-		
+		exec.getCalledFunctions().removeFirst();
 	}
 	
 	public void createLocalVariables(Executor exec)
