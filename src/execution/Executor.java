@@ -1,14 +1,20 @@
 package execution;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 
+import org.antlr.v4.runtime.ANTLRFileStream;
+import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.tree.ParseTree;
 
 import elements.Element;
 import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
+import execution.exceptions.ErrorListener;
+import execution.exceptions.FunctionExecExcetpion;
 import operations.ArithmeticalOperation;
 import operations.ArithmeticalOperator;
 import operations.FunctionCall;
@@ -16,10 +22,15 @@ import operations.Operation;
 import operations.arguments.Argument;
 import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
+import parserAndLexer.ListLanguageLexer;
+import parserAndLexer.ListLanguageParser;
+import parserAndLexer.recognizer.EvalVisitor;
+import parserAndLexer.recognizer.Helper;
 
 public class Executor {
 	
-
+	public static final String SOURCE_PATH = "args/sample.txt";
+	public static final String ENCODING = "UTF-8";
 	private LinkedList<Operation> operations;
 	private LinkedList<FunctionCall> calledFunctions;
 	private HashMap<String, Element<?>> globalVariables;
@@ -30,6 +41,44 @@ public class Executor {
 		calledFunctions = new LinkedList<>();
 		globalVariables = new HashMap<>();
 		functions = new HashMap<>();
+		
+	}
+	
+	public void initCompilation()
+	{
+		ANTLRFileStream input;
+		try {
+			Log.init();
+			input = new ANTLRFileStream(SOURCE_PATH, ENCODING);
+			ListLanguageLexer lexer = new ListLanguageLexer(input);	
+			lexer.removeErrorListeners();
+			lexer.addErrorListener(new ErrorListener());
+			CommonTokenStream tokens = new CommonTokenStream(lexer);
+			ListLanguageParser parser = new ListLanguageParser(tokens);
+			parser.removeErrorListeners();
+			parser.addErrorListener(new ErrorListener());
+			ParseTree tree = parser.compilation_unit();
+			
+			Helper helper = new Helper(this);
+			new EvalVisitor(parser,this,helper).visit(tree);
+			run();
+			print();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		catch(FunctionExecExcetpion e)
+		{
+			e.printStackTrace();
+		}
+		catch(RuntimeException e)
+		{
+			e.printStackTrace();
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
 		
 	}
 	

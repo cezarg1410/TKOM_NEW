@@ -8,6 +8,8 @@ import elements.Element;
 import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
+import elements.buildInFuncs.BuildInFunctionsEnum;
+import elements.buildInFuncs.BuildInFunction;
 import execution.Executor;
 import operations.arguments.Argument;
 import operations.arguments.FunCallArgument;
@@ -15,6 +17,7 @@ import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
 import operations.arguments.VariableArgument;
+import utils.Utils;
 
 public class FunctionCall extends Operation {
 
@@ -33,13 +36,31 @@ public class FunctionCall extends Operation {
 		localVariables = new HashMap<>();
 		this.fd = fd;
 		this.id = id;
-		operations = fd.getOperations();
+		if(fd!=null)
+			operations = fd.getOperations();
 	}
 	
-	
+	public void perfromWhenBuildIn(Executor exec)
+	{
+		Element<?> res = BuildInFunction.call(exec,args,id);
+		if(res != null)
+		{
+			ret = res;
+		}
+
+	}
 
 	@Override
 	public void perform(Executor exec) {
+		for(int i = 0 ; i < BuildInFunctionsEnum.values().length ; i++)
+		{
+			if(id.equals(BuildInFunctionsEnum.values()[i].toString()))
+			{
+				perfromWhenBuildIn(exec);
+				return;
+			}
+		}
+		
 		exec.getCalledFunctions().addFirst(this);
 		fd = exec.getFunctions().get(id);
 		if (fd == null)

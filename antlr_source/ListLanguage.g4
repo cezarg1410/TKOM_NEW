@@ -13,7 +13,6 @@ ELSE				:  	'else';
 
 
 AT					:  	'@';
-PRINT				:  	'print';
 NUMERICAL_VAR_OP 	: 	'number';
 BOOLEAN 			: 	'true' | 'false';
 

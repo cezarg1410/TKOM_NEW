@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import execution.Executor;
+import execution.exceptions.ParsingException;
 import parserAndLexer.ListLanguageBaseVisitor;
 import parserAndLexer.ListLanguageParser;
 import parserAndLexer.ListLanguageParser.AssignmentContext;
@@ -100,7 +101,7 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitErrorNode(ErrorNode node) {
-		// TODO Auto-generated method stub
-		return super.visitErrorNode(node);
+		throw new ParsingException(node.toString());
+		//return super.visitErrorNode(node);
 	}
 }
