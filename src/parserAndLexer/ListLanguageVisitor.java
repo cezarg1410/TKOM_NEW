@@ -19,6 +19,12 @@ public interface ListLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitCompilation_unit(ListLanguageParser.Compilation_unitContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#program}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitProgram(ListLanguageParser.ProgramContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#function_defs}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

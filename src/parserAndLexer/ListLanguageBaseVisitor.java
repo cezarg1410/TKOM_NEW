@@ -26,6 +26,13 @@ public class ListLanguageBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitProgram(ListLanguageParser.ProgramContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitFunction_defs(ListLanguageParser.Function_defsContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}

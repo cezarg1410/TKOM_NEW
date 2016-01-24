@@ -19,6 +19,7 @@ import parserAndLexer.ListLanguageParser.If_statementContext;
 import parserAndLexer.ListLanguageParser.List_var_decContext;
 import parserAndLexer.ListLanguageParser.LoopContext;
 import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
+import parserAndLexer.ListLanguageParser.ProgramContext;
 import utils.Utils;
 
 public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
@@ -36,19 +37,26 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
 	boolean shouldAddToOperations(ParseTree ctx)
 	{
-		boolean res = true;
-		while(true)
+		
+		
+		if(ctx.getParent().getParent() instanceof ProgramContext)
 		{
-			if(ctx.getParent() != null)
-			{
-				if( ctx.getParent() instanceof If_statementContext || ctx.getParent() instanceof Function_defsContext)
-					res = false;
-			}
-			else
-				break;
-			ctx = ctx.getParent();
+			return true;
 		}
-		return res;
+		return false;
+//		boolean res = true;
+//		while(true)
+//		{
+//			if(ctx.getParent() != null)
+//			{
+//				if( ctx.getParent() instanceof If_statementContext || ctx.getParent() instanceof Function_defsContext)
+//					res = false;
+//			}
+//			else
+//				break;
+//			ctx = ctx.getParent();
+//		}
+//		return res;
 	}
 	@Override
 	public Integer visitAssignment(AssignmentContext ctx)

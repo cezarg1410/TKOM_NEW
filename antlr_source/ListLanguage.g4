@@ -47,10 +47,12 @@ OR_OPERATOR			:  	'!&&';
 WS					: 	[ \t\n\r]+ ->skip;
 
 
-compilation_unit 	: function_defs PROGRAM LBRACE operation* RBRACE SEMI;
+compilation_unit 	: function_defs program;
+program				: PROGRAM LBRACE operation* RBRACE SEMI;
 function_defs		:  FUNCTIONS LBRACE function_def* RBRACE SEMI;
 assignment			: ID ASSIGN (list | list_element | NUMBER | function_call | ID);
 operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment;
+arithmetic_operation : (ID | value | list) ACTION_OPERATOR (ID | value | list);
 return_op:			RETURN return_arg  SEMI;
 
 numerical_var_dec 	: NUMERICAL_VAR_OP  ID  ASSIGN  (NUMBER | function_call | list_element) SEMI;
