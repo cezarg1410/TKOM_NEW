@@ -43,23 +43,29 @@ public interface ListLanguageVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitOperation(ListLanguageParser.OperationContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#arithmetic_operation}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArithmetic_operation(ListLanguageParser.Arithmetic_operationContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#return_op}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitReturn_op(ListLanguageParser.Return_opContext ctx);
 	/**
-	 * Visit a parse tree produced by {@link ListLanguageParser#numerical_var_dec}.
-	 * @param ctx the parse tree
-	 * @return the visitor result
-	 */
-	T visitNumerical_var_dec(ListLanguageParser.Numerical_var_decContext ctx);
-	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#list_var_dec}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
 	 */
 	T visitList_var_dec(ListLanguageParser.List_var_decContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link ListLanguageParser#numerical_var_dec}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitNumerical_var_dec(ListLanguageParser.Numerical_var_decContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link ListLanguageParser#list}.
 	 * @param ctx the parse tree

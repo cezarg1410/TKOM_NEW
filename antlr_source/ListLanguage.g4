@@ -30,7 +30,7 @@ fragment
 	DIGIT: [0-9];
 ID				 	: 	LETTER+;
 NUMBER 			 	: 	DIGIT+;
-ACTION_OPERATOR  	: 	'+' | '*' | '-';
+ACTION_OPERATOR  	: 	'+' | '*' | '-' | '/';
 LOGICAL_OPERATOR 	: 	'==' | '!-' | '>' | '>=' | '<' | '<=';
 ASSIGN			 	: 	'=';
 LPAREN           	: 	'(';
@@ -50,13 +50,13 @@ WS					: 	[ \t\n\r]+ ->skip;
 compilation_unit 	: function_defs program;
 program				: PROGRAM LBRACE operation* RBRACE SEMI;
 function_defs		:  FUNCTIONS LBRACE function_def* RBRACE SEMI;
-assignment			: ID ASSIGN (list | list_element | NUMBER | function_call | ID);
-operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment;
-arithmetic_operation : (ID | value | list) ACTION_OPERATOR (ID | value | list);
+assignment			: ID ASSIGN (arithmetic_operation | list | list_element | NUMBER | function_call | ID);
+operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment | arithmetic_operation;
+arithmetic_operation : (ID | value | list | function_call) ACTION_OPERATOR (ID | value | list | function_call);
 return_op:			RETURN return_arg  SEMI;
+list_var_dec 		: LIST_VAR_OP  ID  ASSIGN  (arithmetic_operation | list | function_call )  SEMI; 
+numerical_var_dec 	: NUMERICAL_VAR_OP  ID  ASSIGN  (arithmetic_operation | NUMBER | function_call | list_element) SEMI;
 
-numerical_var_dec 	: NUMERICAL_VAR_OP  ID  ASSIGN  (NUMBER | function_call | list_element) SEMI;
-list_var_dec 		: (LIST_VAR_OP  ID  ASSIGN  list  SEMI) | (LIST_VAR_OP ID ASSIGN function_call SEMI) ;
 list 				: LBRACE NUMBER (COMA NUMBER)* RBRACE;
 list_element 		: ID  LBRACK  NUMBER  RBRACK ;
 
@@ -68,8 +68,8 @@ if_statement 		:  (IF condition
 						(IF condition  
 						then_block);
 						
-then_block			: THEN LBRACE (operation)* RBRACE SEMI;
-else_block			: ELSE LBRACE (operation)* RBRACE SEMI;
+then_block			: THEN LBRACE (operation | return_op)* RBRACE SEMI;
+else_block			: ELSE LBRACE (operation | return_op)* RBRACE SEMI;
 
 condition 			: LPAREN elementary_condition  ((OR_OPERATOR | AND_OPERATOR )  elementary_condition )* RPAREN;
 
@@ -102,4 +102,4 @@ function_def_arg:  ((NUMERICAL_VAR_OP  ID) | (LIST_VAR_OP  ID));
 function_call_arg :	list | value | ID | function_call;
 loop				: LOOP  LPAREN  value RPAREN  LBRACE  operation *  RBRACE SEMI;
 
-return_arg			: ID | value | list | function_call;
+return_arg			: arithmetic_operation | ID | value | list | function_call;

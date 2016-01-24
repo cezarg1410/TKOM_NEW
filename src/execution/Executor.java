@@ -9,8 +9,12 @@ import elements.Element;
 import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
+import operations.ArithmeticalOperation;
+import operations.ArithmeticalOperator;
 import operations.FunctionCall;
 import operations.Operation;
+import operations.arguments.Argument;
+import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
 
 public class Executor {
@@ -119,6 +123,15 @@ public class Executor {
 		fc.setArgs(arg.getArgs());
 		fc.perform(this);
 		return fc.getRet();
+	}
+
+	public Element<?> callArithmeticalOperation(Argument left,Argument right,ArithmeticalOperator ap) {
+		ArithmeticalOperation ao = new ArithmeticalOperation();
+		ao.setLeftArg(left);
+		ao.setRightArg(right);
+		ao.setOperator(ap);
+		ao.perform(this);
+		return ao.getRet();
 	}
 
 }

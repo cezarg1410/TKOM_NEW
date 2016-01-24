@@ -2,25 +2,19 @@ package parserAndLexer.recognizer;
 
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.RuleNode;
 
 import execution.Executor;
-import operations.LoopOperation;
-import operations.arguments.Argument;
 import parserAndLexer.ListLanguageBaseVisitor;
 import parserAndLexer.ListLanguageParser;
 import parserAndLexer.ListLanguageParser.AssignmentContext;
-import parserAndLexer.ListLanguageParser.ConditionContext;
 import parserAndLexer.ListLanguageParser.Elementary_conditionContext;
 import parserAndLexer.ListLanguageParser.Function_callContext;
 import parserAndLexer.ListLanguageParser.Function_defContext;
-import parserAndLexer.ListLanguageParser.Function_defsContext;
 import parserAndLexer.ListLanguageParser.If_statementContext;
 import parserAndLexer.ListLanguageParser.List_var_decContext;
 import parserAndLexer.ListLanguageParser.LoopContext;
 import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
 import parserAndLexer.ListLanguageParser.ProgramContext;
-import utils.Utils;
 
 public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
@@ -35,28 +29,13 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		this.helper = helper;
 	}
 
-	boolean shouldAddToOperations(ParseTree ctx)
+	public boolean shouldAddToOperations(ParseTree ctx)
 	{
-		
-		
 		if(ctx.getParent().getParent() instanceof ProgramContext)
 		{
 			return true;
 		}
 		return false;
-//		boolean res = true;
-//		while(true)
-//		{
-//			if(ctx.getParent() != null)
-//			{
-//				if( ctx.getParent() instanceof If_statementContext || ctx.getParent() instanceof Function_defsContext)
-//					res = false;
-//			}
-//			else
-//				break;
-//			ctx = ctx.getParent();
-//		}
-//		return res;
 	}
 	@Override
 	public Integer visitAssignment(AssignmentContext ctx)
@@ -95,29 +74,6 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		helper.createFunctionDefinition(ctx,exec.getOperations());
 		return super.visitFunction_def(ctx);
 	}
-	
-//	@Override
-//	public Integer visitList(ListContext ctx) {
-//		return super.visitList(ctx);
-//	}
-//
-//	@Override
-//	public Integer visitList_element(List_elementContext ctx) {
-//		return super.visitList_element(ctx);
-//	}
-//
-//	@Override
-//	public Integer visitValue(ValueContext ctx) {
-//		return super.visitValue(ctx);
-//	}
-
-
-	
-	@Override
-	public Integer visitCondition(ConditionContext ctx) {
-		// TODO Auto-generated method stub
-		return super.visitCondition(ctx);
-	}
 
 	@Override
 	public Integer visitElementary_condition(Elementary_conditionContext ctx) {
@@ -128,7 +84,8 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitFunction_call(Function_callContext ctx) {
-		//if(ctx.getParent().equals(obj))
+		if(!shouldAddToOperations(ctx))
+			return super.visitFunction_call(ctx);
 		if(!(ctx.parent instanceof Numerical_var_decContext))
 			helper.visitFunctionCall(ctx,exec.getOperations());
 		return super.visitFunction_call(ctx);
@@ -137,7 +94,7 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 	@Override
 	public Integer visitLoop(LoopContext ctx) {
 		helper.visitLoop(ctx,exec.getOperations());
-		return super.visitLoop(ctx); //TODO
+		return super.visitLoop(ctx);
 	}
 
 
@@ -146,11 +103,4 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		// TODO Auto-generated method stub
 		return super.visitErrorNode(node);
 	}
-	
-	@Override
-	public Integer visitChildren(RuleNode arg0) {
-		// TODO Auto-generated method stub
-		return super.visitChildren(arg0);
-	}
-
 }

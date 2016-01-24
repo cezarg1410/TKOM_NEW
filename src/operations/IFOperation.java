@@ -38,6 +38,7 @@ public class IFOperation extends Operation{
 			if(i == 0)
 				res = scores.get(i);
 			else 
+
 			{
 				boolean next = scores.get(i);
 				if(operators.get(i-1).equals(LogicalOperator.AND))

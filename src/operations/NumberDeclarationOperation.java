@@ -1,8 +1,10 @@
 package operations;
 
+import elements.Element;
 import elements.NumberElement;
 import execution.Executor;
 import operations.arguments.Argument;
+import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
 
 public class NumberDeclarationOperation extends Operation{
@@ -27,8 +29,23 @@ public class NumberDeclarationOperation extends Operation{
 	public void perform(Executor exec) {
 		
 		if(var == null)
-		{			
-			var = (Integer)exec.callOuterFunction((FunCallArgument)arg).getContent();
+		{	
+			if(arg instanceof FunCallArgument)
+			{
+				FunCallArgument fc = (FunCallArgument) arg;
+				Element<?> ret = exec.callOuterFunction(fc);
+				var = (Integer)ret.getContent();
+			}
+			else
+			{
+				ArithmeticalArgument aa = (ArithmeticalArgument) arg;
+				Element <?> ret = exec.callArithmeticalOperation(aa.getArgs().get(0),aa.getArgs().get(1),aa.getOperator());
+				if (ret != null)
+				{
+					var = (Integer)ret.getContent();
+				}
+			}
+			
 		}
 		
 		NumberElement l = new NumberElement(var);
@@ -38,7 +55,7 @@ public class NumberDeclarationOperation extends Operation{
 		}
 		else
 		{
-			exec.getCalledFunctions().getLast().getLocalVariables().put(id, l);
+			exec.getCalledFunctions().getFirst().getLocalVariables().put(id, l);
 		}
 		
 	}

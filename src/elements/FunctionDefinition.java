@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 
 import operations.Operation;
-import operations.arguments.Argument;
 
 public class FunctionDefinition{
 

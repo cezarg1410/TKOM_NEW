@@ -9,13 +9,16 @@ import elements.Element;
 import elements.ListElement;
 import elements.NumberElement;
 import execution.Executor;
+import operations.ArithmeticalOperator;
 import operations.FunctionCall;
 import operations.arguments.Argument;
+import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
 import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
 import operations.arguments.VariableArgument;
+import parserAndLexer.ListLanguageParser.Arithmetic_operationContext;
 import parserAndLexer.ListLanguageParser.Function_callContext;
 import parserAndLexer.ListLanguageParser.ListContext;
 import parserAndLexer.ListLanguageParser.ValueContext;
@@ -28,6 +31,11 @@ public class Utils {
 		if(arg instanceof FunCallArgument)
 		{
 			elem = exec.callOuterFunction((FunCallArgument)arg);
+		}
+		else if(arg instanceof ArithmeticalArgument)
+		{
+			ArithmeticalArgument aa = (ArithmeticalArgument) arg;
+			elem = exec.callArithmeticalOperation(aa.getArgs().get(0), aa.getArgs().get(1), aa.getOperator());
 		}
 		else if(arg instanceof ListArgument)
 		{
@@ -51,12 +59,8 @@ public class Utils {
 	
 	public static Argument getArgument(ParseTree parseTree)
 	{
-		if(parseTree instanceof TerminalNode)
-		{
-			String id = parseTree.toString();
-			return new VariableArgument(id);
-		}
-		else if(parseTree instanceof ListContext)
+		
+		if(parseTree instanceof ListContext)
 		{
 			ListContext l = (ListContext) parseTree;
 			ArrayList<Integer> list = new ArrayList<>();
@@ -84,7 +88,29 @@ public class Utils {
 		else if (parseTree instanceof Function_callContext){
 			
 			Function_callContext fc = (Function_callContext) parseTree;
-			return new FunCallArgument(fc.ID().toString());
+			FunCallArgument fca = new FunCallArgument(fc.ID().toString());
+			for(int i = 0  ; i < fc.function_call_arg().size() ; i++)
+			{
+				Argument arg = Utils.getArgument(fc.function_call_arg(i).getChild(0));
+				fca.getArgs().add(arg);
+			}
+			return fca;
+		}
+		else if(parseTree instanceof Arithmetic_operationContext)
+		{
+			Arithmetic_operationContext ao = (Arithmetic_operationContext) parseTree;
+			ArithmeticalArgument aa = new ArithmeticalArgument();
+			Argument left = Utils.getArgument(ao.children.get(0));
+			Argument right = Utils.getArgument(ao.children.get(2));
+			aa.getArgs().add(left);
+			aa.getArgs().add(right);
+			aa.setOperator(ArithmeticalOperator.fromString(ao.ACTION_OPERATOR().toString()));
+			return aa;
+		}
+		if(parseTree instanceof TerminalNode)
+		{
+			String id = parseTree.toString();
+			return new VariableArgument(id);
 		}
 		else throw new RuntimeException();
 	}

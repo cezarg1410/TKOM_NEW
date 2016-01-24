@@ -54,6 +54,13 @@ public class ListLanguageBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
+	@Override public T visitArithmetic_operation(ListLanguageParser.Arithmetic_operationContext ctx) { return visitChildren(ctx); }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation returns the result of calling
+	 * {@link #visitChildren} on {@code ctx}.</p>
+	 */
 	@Override public T visitReturn_op(ListLanguageParser.Return_opContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
@@ -61,14 +68,14 @@ public class ListLanguageBaseVisitor<T> extends AbstractParseTreeVisitor<T> impl
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitNumerical_var_dec(ListLanguageParser.Numerical_var_decContext ctx) { return visitChildren(ctx); }
+	@Override public T visitList_var_dec(ListLanguageParser.List_var_decContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation returns the result of calling
 	 * {@link #visitChildren} on {@code ctx}.</p>
 	 */
-	@Override public T visitList_var_dec(ListLanguageParser.List_var_decContext ctx) { return visitChildren(ctx); }
+	@Override public T visitNumerical_var_dec(ListLanguageParser.Numerical_var_decContext ctx) { return visitChildren(ctx); }
 	/**
 	 * {@inheritDoc}
 	 *

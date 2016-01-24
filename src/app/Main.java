@@ -1,6 +1,7 @@
 package app;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import org.antlr.v4.runtime.ANTLRFileStream;
 import org.antlr.v4.runtime.CommonTokenStream;
@@ -33,6 +34,7 @@ public class Main {
 			
 			exec.run();
 			exec.print();
+
 
 		
 		} catch (IOException e) {
