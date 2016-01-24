@@ -63,18 +63,22 @@ public class Executor {
 			run();
 			print();
 		} catch (IOException e) {
+			e.printStackTrace();
 			Log.log(e.toString());
 		}
 		catch(FunctionExecExcetpion e)
 		{
+			e.printStackTrace();
 			Log.log(e.toString());
 		}
 		catch(RuntimeException e)
 		{
+			e.printStackTrace();
 			Log.log(e.toString());
 		}
 		catch(Exception e)
 		{
+			e.printStackTrace();
 			Log.log(e.toString());
 		}
 		
@@ -133,7 +137,7 @@ public class Executor {
 		}
 	}
 	
-	public Element<?> getVar(String id)
+	public Element<?> getVar(String id,int line)
 	{
 		Element<?> res = null;
 		if(calledFunctions.size() !=0)
@@ -143,37 +147,37 @@ public class Executor {
 		if(res == null)
 			res = getGlobalVariables().get(id);
 		if(res == null)
-			throw new RuntimeException("Brak takiej zmiennej !!");
+			throw new RuntimeException("Brak takiej zmiennej !!. LINIA: "+line);
 		return res;
 	}
 	
-	public ListElement getListElement(String id)
+	public ListElement getListElement(String id,int line)
 	{
-		ListElement elem = (ListElement) getVar(id);
+		ListElement elem = (ListElement) getVar(id,line);
 		return elem;
 	}
 	
-	public NumberElement getNumberElement(String id)
+	public NumberElement getNumberElement(String id,int line)
 	{
-		NumberElement elem = (NumberElement) getVar(id);
+		NumberElement elem = (NumberElement) getVar(id,line);
 		return elem;
 	}
 	
-	public Integer getIntegerFromListIndex(String id, Integer index)
+	public Integer getIntegerFromListIndex(String id, Integer index,int line)
 	{	
-		return getListElement(id).getContent().get(index);	
+		return getListElement(id,line).getContent().get(index);	
 	}
 	
-	public Element<?> callOuterFunction(FunCallArgument arg)
+	public Element<?> callOuterFunction(FunCallArgument arg,int line)
 	{
-		FunctionCall fc = new FunctionCall(functions.get(arg.getFuncId()),arg.getFuncId());
+		FunctionCall fc = new FunctionCall(functions.get(arg.getFuncId()),arg.getFuncId(), line);
 		fc.setArgs(arg.getArgs());
 		fc.perform(this);
 		return fc.getRet();
 	}
 
-	public Element<?> callArithmeticalOperation(Argument left,Argument right,ArithmeticalOperator ap) {
-		ArithmeticalOperation ao = new ArithmeticalOperation();
+	public Element<?> callArithmeticalOperation(Argument left,Argument right,ArithmeticalOperator ap,int line) {
+		ArithmeticalOperation ao = new ArithmeticalOperation(line);
 		ao.setLeftArg(left);
 		ao.setRightArg(right);
 		ao.setOperator(ap);

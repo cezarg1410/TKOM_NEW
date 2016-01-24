@@ -1,21 +1,25 @@
 FUNCTIONS
 {
-	@sth()
+	@sthVB(number d)
 	{
-		return 2+21;
+		number a = 5;
+		return 2;
 	};
+	@sth(number e)
+	{
+		return {2,3,4};
+	};
+
 };
 
 PROGRAM
 {
 	list c = {1,2,3,4,10,5,6};
 	number d = 2+3;
+	 d= sthVB(9);
+	 c = sth(2);
 	
-	if(d > c[2])
-	then {
-			d = 8;
-	};
-	
+
 
 };
 

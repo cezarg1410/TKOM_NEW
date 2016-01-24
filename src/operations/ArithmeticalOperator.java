@@ -16,7 +16,7 @@ public enum ArithmeticalOperator {
 		{
 			if(l.toString().equals(operator)) return l;
 		}
-		throw new RuntimeException("Nieprawidłowy operator");
+		throw new RuntimeException("Nieprawidłowy operator !!");
 	}
 	
 	@Override

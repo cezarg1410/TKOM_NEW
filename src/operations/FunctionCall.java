@@ -17,7 +17,6 @@ import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
 import operations.arguments.VariableArgument;
-import utils.Utils;
 
 public class FunctionCall extends Operation {
 
@@ -30,7 +29,7 @@ public class FunctionCall extends Operation {
 	private LinkedList<Operation> operations;
 	private Element<?> ret;
 	
-	public FunctionCall(FunctionDefinition fd,String id)
+	public FunctionCall(FunctionDefinition fd,String id,int line)
 	{
 		args = new ArrayList<>();
 		localVariables = new HashMap<>();
@@ -38,11 +37,12 @@ public class FunctionCall extends Operation {
 		this.id = id;
 		if(fd!=null)
 			operations = fd.getOperations();
+		this.line = line;
 	}
 	
 	public void perfromWhenBuildIn(Executor exec)
 	{
-		Element<?> res = BuildInFunction.call(exec,args,id);
+		Element<?> res = BuildInFunction.call(exec,args,id,line);
 		if(res != null)
 		{
 			ret = res;
@@ -64,7 +64,7 @@ public class FunctionCall extends Operation {
 		exec.getCalledFunctions().addFirst(this);
 		fd = exec.getFunctions().get(id);
 		if (fd == null)
-			throw new RuntimeException();
+			throw new RuntimeException("Brak takiej funkcji. LINIA: "+line);
 		createLocalVariables(exec);
 		for(Operation o : operations)
 		{
@@ -86,22 +86,22 @@ public class FunctionCall extends Operation {
 			if(args.get(i) instanceof ListArgument)
 			{
 				ListArgument la = (ListArgument) args.get(i);
-				localVariables.put(fd.getArgs().get(i), new ListElement(la.getContent()));
+				localVariables.put(fd.getArgs().get(i), new ListElement(la.getContent(),line));
 			}
 			else if(args.get(i) instanceof NumberArgument)
 			{
 				NumberArgument na = (NumberArgument) args.get(i);
-				localVariables.put(fd.getArgs().get(i), new NumberElement(na.getNumber()));
+				localVariables.put(fd.getArgs().get(i), new NumberElement(na.getNumber(),line));
 			}
 			else if(args.get(i) instanceof ListElementInIndexArgument)
 			{
 				ListElementInIndexArgument le = (ListElementInIndexArgument) args.get(i);
-				localVariables.put(fd.getArgs().get(i), new NumberElement(exec.getIntegerFromListIndex(le.getId(), le.getIndex())));
+				localVariables.put(fd.getArgs().get(i), new NumberElement(exec.getIntegerFromListIndex(le.getId(), le.getIndex(),line),line));
 			}
 			else if(args.get(i) instanceof VariableArgument)
 			{
 				VariableArgument va = (VariableArgument) args.get(i);
-				localVariables.put(fd.getArgs().get(i), exec.getVar(va.getVarId()));
+				localVariables.put(fd.getArgs().get(i), exec.getVar(va.getVarId(),line));
 			}
 			else if(args.get(i) instanceof FunCallArgument)
 			{

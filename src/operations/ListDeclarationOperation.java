@@ -13,11 +13,11 @@ public class ListDeclarationOperation extends Operation {
 	ArrayList<Integer> var;
 	Argument arg;
 	
-	public ListDeclarationOperation(String id, ArrayList<Integer> list)
+	public ListDeclarationOperation(String id, ArrayList<Integer> list,int line)
 	{
 		this.id =id;
 		this.var = list;
-		
+		this.line = line;
 	}
 
 	public ListDeclarationOperation(String id, Argument arg)
@@ -33,7 +33,7 @@ public class ListDeclarationOperation extends Operation {
 		if(var == null)
 		{
 			FunCallArgument fc = (FunCallArgument) arg;
-			Element<?> ret = exec.callOuterFunction(fc);
+			Element<?> ret = exec.callOuterFunction(fc,line);
 			if(ret instanceof ListElement)
 			{
 				ListElement le = (ListElement) ret;
@@ -41,8 +41,9 @@ public class ListDeclarationOperation extends Operation {
 			}
 			
 		}
-		
-		ListElement l = new ListElement(var);
+		if(!(var instanceof ArrayList))
+			throw new RuntimeException("Nieprawdiłowy typ przypisywany do zmiennej. LINIA:"+line);
+		ListElement l = new ListElement(var,line);
 		if(exec.getCalledFunctions().size() == 0)
 		{
 			exec.getGlobalVariables().put(id, l);

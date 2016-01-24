@@ -17,10 +17,13 @@ public class ArithmeticalOperation extends Operation {
 	Argument leftArg;
 	Argument rightArg;
 	ArithmeticalOperator operator;
-	
+	public ArithmeticalOperation(int line)
+	{
+		this.line = line;
+	}
 	@Override
 	public void perform(Executor exec) {
-		calcArgs(exec);
+		calcArgs(exec, line);
 		calc();
 	}
 
@@ -40,17 +43,17 @@ public class ArithmeticalOperation extends Operation {
 				{
 					res.add(r.getContent().get(i));
 				}
-				ret = new ListElement(res);
+				ret = new ListElement(res,line);
 			}
 			if(left instanceof NumberElement && right instanceof NumberElement)
 			{
 				NumberElement l = (NumberElement) left;
 				NumberElement r = (NumberElement) right;
 				Integer res = l.getContent() + r.getContent();
-				ret = new NumberElement(res);
+				ret = new NumberElement(res,line);
 			}
 			else 
-				throw new RuntimeException();
+				throw new RuntimeException("Nieprawidłowe argumenty dla operatora +. LINIA: "+left.line);
 			
 		}
 		else if(operator.equals(ArithmeticalOperator.SUB))
@@ -65,17 +68,17 @@ public class ArithmeticalOperation extends Operation {
 					if(l.getContent().contains(r.getContent().get(i)))
 						res.remove(r.getContent().get(i));
 				}
-				ret = new ListElement(res);
+				ret = new ListElement(res,line);
 			}
 			if(left instanceof NumberElement && right instanceof NumberElement)
 			{
 				NumberElement l = (NumberElement) left;
 				NumberElement r = (NumberElement) right;
 				Integer res = l.getContent() - r.getContent();
-				ret = new NumberElement(res);
+				ret = new NumberElement(res,line);
 			}
 			else 
-				throw new RuntimeException();
+				throw new RuntimeException("Nieprawidłowe argumenty dla operatora -. LINIA: "+left.line);
 		}
 		else if(operator.equals(ArithmeticalOperator.MULT))
 		{
@@ -88,7 +91,7 @@ public class ArithmeticalOperation extends Operation {
 				{
 					res.add(l.getContent().get(i) * r.getContent());
 				}
-				ret = new ListElement(res);
+				ret = new ListElement(res,line);
 			}
 			else if(left instanceof NumberElement && right instanceof ListElement)
 			{
@@ -99,16 +102,16 @@ public class ArithmeticalOperation extends Operation {
 				{
 					res.add(r.getContent().get(i) * l.getContent());
 				}
-				ret = new ListElement(res);
+				ret = new ListElement(res,line);
 			}
 			else if(left instanceof NumberElement && right instanceof NumberElement)
 			{
 				NumberElement l = (NumberElement) left;
 				NumberElement r = (NumberElement) right;
-				ret = new NumberElement(l.getContent() * r.getContent());
+				ret = new NumberElement(l.getContent() * r.getContent(),line);
 			}
 			else 
-				throw new RuntimeException();
+				throw new RuntimeException("Nieprawidłowe argumenty dla operatora *. LINIA: "+left.line);
 		}
 		else if(operator.equals(ArithmeticalOperator.DIV))
 		{
@@ -121,7 +124,7 @@ public class ArithmeticalOperation extends Operation {
 				{
 					res.add(l.getContent().get(i) / r.getContent());
 				}
-				ret = new ListElement(res);
+				ret = new ListElement(res,line);
 			}
 			else if(left instanceof NumberElement && right instanceof ListElement)
 			{
@@ -132,24 +135,24 @@ public class ArithmeticalOperation extends Operation {
 				{
 					res.add(r.getContent().get(i) / l.getContent());
 				}
-				ret = new ListElement(res);
+				ret = new ListElement(res,line);
 			}
 			else if(left instanceof NumberElement && right instanceof NumberElement)
 			{
 				NumberElement l = (NumberElement) left;
 				NumberElement r = (NumberElement) right;
-				ret = new NumberElement(l.getContent() / r.getContent());
+				ret = new NumberElement(l.getContent() / r.getContent(),line);
 			}
 			else 
-				throw new RuntimeException();
+				throw new RuntimeException("Nieprawidłowe argumenty dla operatora /. LINIA: "+left.line);
 		}
 		
 		
 	}
 
-	private void calcArgs(Executor exec) {
-		left = Utils.calcArgument(leftArg, exec);
-		right = Utils.calcArgument(rightArg, exec);
+	private void calcArgs(Executor exec,int line) {
+		left = Utils.calcArgument(leftArg, exec, line);
+		right = Utils.calcArgument(rightArg, exec, line);
 	}
 
 	public Element<?> getLeft() {

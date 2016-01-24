@@ -2,9 +2,9 @@ package elements;
 
 public class NumberElement extends Element<Integer> {
 
-	public NumberElement(Integer content) {
+	public NumberElement(Integer content,int line) {
 		
-		super(content);
+		super(content,line);
 	}
 
 	@Override

@@ -9,11 +9,13 @@ public class FunctionDefinition{
 
 	public ArrayList<String> args;
 	public LinkedList<Operation> operations;
+	public int line;
 	
-	public FunctionDefinition()
+	public FunctionDefinition(int line)
 	{
 		args = new ArrayList<>();
 		operations = new LinkedList<>();
+		this.line = line;
 	}
 	
 	

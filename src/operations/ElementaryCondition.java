@@ -22,20 +22,23 @@ public class ElementaryCondition {
 	LogicalOperator operator;
 	Element<?> right;
 	boolean result;
-	public ElementaryCondition(Element<?> left, LogicalOperator operator, Element<?> right)
+	int line;
+	public ElementaryCondition(Element<?> left, LogicalOperator operator, Element<?> right,int line)
 	{
 		this.left = left;
 		this.operator = operator;
 		this.right = right;
+		this.line = line;
 	}
 	
 	
 	
-	public ElementaryCondition(Argument firstArg, LogicalOperator lo, Argument secondArg) 
+	public ElementaryCondition(Argument firstArg, LogicalOperator lo, Argument secondArg,int line) 
 	{
 		this.leftArg = firstArg;
 		this.rightArg = secondArg;
 		this.operator = lo;
+		this.line = line;
 	}
 
 
@@ -71,7 +74,7 @@ public class ElementaryCondition {
 				return false;
 			}
 			else
-				throw new RuntimeException("Niepoprawy operator logiczny");
+				throw new RuntimeException("Niepoprawy operator logiczny. LINIA: "+left.line);
 		}
 		else if(left instanceof NumberElement && right instanceof NumberElement)
 		{
@@ -95,22 +98,22 @@ public class ElementaryCondition {
 		}
 		else if(left instanceof ListElement && right instanceof NumberElement)
 		{
-			throw new RuntimeException("Niepoprawny operator logiczny");
+			throw new RuntimeException("Niepoprawny operator logiczny. LINIA: "+left.line);
 		}
 		else if(left instanceof NumberElement && right instanceof ListElement)
 		{
-			throw new RuntimeException("Niepoprawny operator logiczny");
+			throw new RuntimeException("Niepoprawny operator logiczny. LINIA: "+left.line);
 		}
 		else 
-			throw new RuntimeException("Niepoprawne argumenty funkcji logicznej");
+			throw new RuntimeException("Niepoprawne argumenty funkcji logicznej. LINIA: "+left.line);
 	}
 
 
 
 	private void calcArgs(Executor exec) 
 	{
-		left = Utils.calcArgument(leftArg, exec);
-		right = Utils.calcArgument(rightArg, exec);
+		left = Utils.calcArgument(leftArg, exec, line);
+		right = Utils.calcArgument(rightArg, exec, line);
 	}
 
 }

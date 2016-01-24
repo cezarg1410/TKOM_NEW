@@ -29,7 +29,7 @@ public class ReturnOperation extends Operation {
 	@Override
 	public void perform(Executor exec) {
 		
-		retValue = Utils.calcArgument(retArg, exec);
+		retValue = Utils.calcArgument(retArg, exec, line);
 		if(exec.getCalledFunctions().size() != 0)
 		{
 			exec.getCalledFunctions().getFirst().setRet(retValue);

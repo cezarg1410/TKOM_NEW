@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import elements.Element;
 import execution.Executor;
 import operations.arguments.Argument;
-import operations.arguments.VariableArgument;
 import utils.Utils;
 
 public class LoopOperation extends Operation {
@@ -14,10 +13,11 @@ public class LoopOperation extends Operation {
 	private Integer count;
 	private Argument arg;
 	
-	public LoopOperation(Argument arg)
+	public LoopOperation(Argument arg,int line)
 	{
 		operations = new LinkedList<>();
 		this.arg = arg;
+		this.line = line;
 	}
 	
 	public LinkedList<Operation> getOperations() {
@@ -38,7 +38,7 @@ public class LoopOperation extends Operation {
 
 	@Override
 	public void perform(Executor exec) {
-		Element<?> el = Utils.calcArgument(arg, exec);
+		Element<?> el = Utils.calcArgument(arg, exec, line);
 		count = (Integer) el.getContent();
 
 		for(int i = 0 ; i < count ; i++)

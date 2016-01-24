@@ -6,13 +6,13 @@ public abstract class Element<T> {
 	String ids;
 	boolean ghostElement;
 	T content;
-	private Integer start;
-	private Integer stop;
+	public int line;
 	
-	public Element(T content)
+	public Element(T content, int line)
 	{
 		ghostElement = false;
 		this.content = content;
+		this.line = line;
 	}
 	
 	public T getContent() {
@@ -23,16 +23,4 @@ public abstract class Element<T> {
 		this.content = content;
 	}
 
-	public Integer getStart() {
-		return start;
-	}
-	public void setStart(Integer start) {
-		this.start = start;
-	}
-	public Integer getStop() {
-		return stop;
-	}
-	public void setStop(Integer stop) {
-		this.stop = stop;
-	}
 }

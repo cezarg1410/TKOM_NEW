@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 public class ListElement extends Element<ArrayList<Integer>> {
 
-	public ListElement(ArrayList<Integer> content)
+	public ListElement(ArrayList<Integer> content,int line)
 	{
-		super(content);
+		super(content,line);
 	}
 
 	@Override

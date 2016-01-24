@@ -9,9 +9,10 @@ public class ArithmeticalArgument extends Argument{
 	private ArrayList<Argument> args;
 	private ArithmeticalOperator operator;
 	
-	public ArithmeticalArgument()
+	public ArithmeticalArgument(int line)
 	{
 		args = new ArrayList<>();
+		this.line = line;
 	}
 	
 	public ArrayList<Argument> getArgs() 

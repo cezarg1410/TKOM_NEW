@@ -57,42 +57,42 @@ public class Helper {
 			{
 				content.add(Integer.parseInt(ctx.list().NUMBER(i).toString()));
 			}
-			AssignmentOperation ao = new AssignmentOperation(id,new ListElement(content));
-			ao.setStart(ctx.start.getLine());
+			AssignmentOperation ao = new AssignmentOperation(id,new ListElement(content,ctx.start.getLine()),ctx.start.getLine());
+			container.add(ao);
+
 		}
 		else if (ctx.list_element() != null)
 		{
-			Integer val = getListElement(ctx.list_element().ID().toString(), ctx.list_element().NUMBER().toString(),container);
-			AssignmentOperation ao = new AssignmentOperation(id,new NumberElement(val));
-			ao.setStart(ctx.start.getLine());
+			Integer val = getListElement(ctx.list_element().ID().toString(), ctx.list_element().NUMBER().toString(),container,ctx.start.getLine());
+			AssignmentOperation ao = new AssignmentOperation(id,new NumberElement(val,ctx.start.getLine()),ctx.start.getLine());
 			container.add(ao);
 		}
 		else if(ctx.NUMBER() != null)
 		{
 			Integer val = Integer.parseInt(ctx.NUMBER().toString());
-			AssignmentOperation ao = new AssignmentOperation(id,new NumberElement(val));
-			ao.setStart(ctx.start.getLine());
-			container.add(ao);
-		}
-		else if(ctx.ID().size() > 0 && ctx.ID().get(1) != null) 
-		{
-			VariableArgument va = new VariableArgument(ctx.ID(0).toString());
-			
-			AssignmentOperation ao = new AssignmentOperation(id,va);
-			ao.setStart(ctx.start.getLine());
+			AssignmentOperation ao = new AssignmentOperation(id,new NumberElement(val,ctx.start.getLine()),ctx.start.getLine());
+
 			container.add(ao);
 		}
 		
 		else if(ctx.function_call() != null)
 		{
-			FunCallArgument fc = new FunCallArgument(ctx.function_call().ID().toString());
+			FunCallArgument fc = new FunCallArgument(ctx.function_call().ID().toString(),ctx.start.getLine());
 			for (int i = 0 ; i < ctx.function_call().function_call_arg().size() ; i++)
 			{
-				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i));
+				Argument arg = Utils.getArgument(ctx.function_call(),ctx.start.getLine());
 				fc.getArgs().add(arg);
 			}
-			AssignmentOperation ao = new AssignmentOperation(id, fc);
-			ao.setStart(ctx.start.getLine());
+			AssignmentOperation ao = new AssignmentOperation(id, fc,ctx.start.getLine());
+
+			container.add(ao);
+		}
+		else if(ctx.ID().size() > 0 && ctx.ID().get(1) != null) 
+		{
+			VariableArgument va = new VariableArgument(ctx.ID(0).toString(),ctx.start.getLine());
+			
+			AssignmentOperation ao = new AssignmentOperation(id,va,ctx.start.getLine());
+
 			container.add(ao);
 		}
 	}
@@ -107,43 +107,40 @@ public class Helper {
 		}
 		else if(ctx.list_element() != null)
 		{
-			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString(),container);	
+			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString(),container,ctx.start.getLine());	
 		}
 		else if(ctx.function_call() != null)
 		{
-			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call());
-			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,fc);
-			nd.setStart(ctx.start.getLine());
+			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call(),ctx.start.getLine());
+			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,fc,ctx.start.getLine());
 			container.add(nd);
 			return;
 			
 		}
 		else if(ctx.arithmetic_operation() != null)
 		{
-			ArithmeticalArgument aa = new ArithmeticalArgument();
-			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(0)));
-			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(2)));
+			ArithmeticalArgument aa = new ArithmeticalArgument(ctx.start.getLine());
+			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(0),ctx.start.getLine()));
+			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(2),ctx.start.getLine()));
 			aa.setOperator(ArithmeticalOperator.fromString(ctx.arithmetic_operation().getChild(1).toString()));
 			
-			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,aa);
-			nd.setStart(ctx.start.getLine());
+			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,aa,ctx.start.getLine());
 			container.add(nd);
 			return;
 		}
-		NumberDeclarationOperation nd = new NumberDeclarationOperation(id,val);
-		nd.setStart(ctx.start.getLine());
+		NumberDeclarationOperation nd = new NumberDeclarationOperation(id,val,ctx.start.getLine());
 		container.add(nd);
 	}
 	
 	
 
 
-	private Integer getListElement(String id, String number, List<Operation> container) {
+	private Integer getListElement(String id, String number, List<Operation> container,int line) {
 		if(exec.getCalledFunctions().size() == 0)
 		{
 			ListElement e = (ListElement) exec.getGlobalVariables().get(id);
 			if(e == null)
-				throw new RuntimeException("Brak listy o id: "+id);
+				throw new RuntimeException("Brak listy o id: "+id + " LINIA: "+line);
 			else
 				return e.getContent().get(Integer.parseInt(number));
 		}
@@ -168,14 +165,12 @@ public class Helper {
 		}
 		else
 		{
-			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call());
+			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call(),ctx.start.getLine());
 			ListDeclarationOperation ld = new ListDeclarationOperation(id,fc);
-			ld.setStart(ctx.getStart().getLine());
 			container.add(ld);
 			return;
 		}
-		ListDeclarationOperation ld = new ListDeclarationOperation(id,content);
-		ld.setStart(ctx.getStart().getLine());
+		ListDeclarationOperation ld = new ListDeclarationOperation(id,content,ctx.start.getLine());
 		container.add(ld);
 	}
 	
@@ -186,14 +181,14 @@ public class Helper {
 	
 
 	public void visitIfStatement(If_statementContext ctx, List<Operation> container) {
-		IFOperation oper = new IFOperation();
+		IFOperation oper = new IFOperation(ctx.start.getLine());
 		for(Elementary_conditionContext ct : ctx.condition().elementary_condition())
 		{
-			Argument firstArg = Utils.getArgument(ct.children.get(0));
-			Argument secondArg = Utils.getArgument(ct.children.get(2));
+			Argument firstArg = Utils.getArgument(ct.children.get(0),ctx.start.getLine());
+			Argument secondArg = Utils.getArgument(ct.children.get(2),ctx.start.getLine());
 
 			LogicalOperator lo = LogicalOperator.fromString(ct.children.get(1).toString());
-			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); 
+			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg,ctx.start.getLine()); 
 			oper.getConditions().add(ec);
 		}
 		String and = ListLanguageLexer.VOCABULARY.getLiteralName(25).toString().substring(1, 3);
@@ -228,7 +223,7 @@ public class Helper {
 
 	public void createFunctionDefinition(Function_defContext ctx, List<Operation> container) {
 		
-		FunctionDefinition fc = new FunctionDefinition();
+		FunctionDefinition fc = new FunctionDefinition(ctx.start.getLine());
 		String id = ctx.ID().toString();
 		for(int i = 0 ; i < ctx.function_def_arg().size() ; i++)
 		{
@@ -290,28 +285,26 @@ public class Helper {
 
 	private void visitReturn(Return_opContext return_op, List<Operation> container) {
 		ReturnOperation ro = new ReturnOperation();
-		Argument arg = Utils.getArgument(return_op.return_arg().getChild(0));
+		Argument arg = Utils.getArgument(return_op.return_arg().getChild(0),return_op.start.getLine());
 		ro.setRetArg(arg);
-		ro.setStart(return_op.getStart().getLine());
 		container.add(ro);
 	}
 
 	public void visitFunctionCall(Function_callContext ctx, List<Operation> container) {
 		String id = ctx.ID().toString();
 		FunctionDefinition fd = exec.getFunctions().get(id);
-		FunctionCall fc = new FunctionCall(fd,id);
+		FunctionCall fc = new FunctionCall(fd,id,ctx.start.getLine());
 		fc.setId(id);
 		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
 		{
-			fc.getArgs().add(Utils.getArgument(ctx.function_call_arg(i).children.get(0)));
+			fc.getArgs().add(Utils.getArgument(ctx.function_call_arg(i).children.get(0),ctx.start.getLine()));
 		}
-		fc.setStart(ctx.getStart().getLine());
 		container.add(fc);
  	}
 	
 	public void visitLoop(LoopContext ctx, List<Operation> operations) {
-		Argument arg = Utils.getArgument(ctx.value());
-		LoopOperation lo = new LoopOperation(arg);
+		Argument arg = Utils.getArgument(ctx.value(),ctx.start.getLine());
+		LoopOperation lo = new LoopOperation(arg,ctx.start.getLine());
 		
 		for(int i = 0 ; i < ctx.operation().size() ; i++)
 		{

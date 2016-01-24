@@ -5,10 +5,11 @@ import java.util.ArrayList;
 public class FunCallArgument extends Argument {
 
 	
-	public FunCallArgument(String id)
+	public FunCallArgument(String id,int line)
 	{
 		funcId = id;
 		args = new ArrayList<>();
+		this.line = line;
 	}
 	
 	public ArrayList<Argument> getArgs() {

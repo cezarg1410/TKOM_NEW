@@ -89,10 +89,19 @@ elementary_condition :
 					| (function_call LOGICAL_OPERATOR list)
 					| (list LOGICAL_OPERATOR function_call)
 					| (list LOGICAL_OPERATOR list);								
-function_def		: AT ID  LPAREN  ((function_def_arg (COMA function_def_arg)*) | ())  RPAREN
+//function_def		: AT ID  LPAREN  ((function_def_arg (COMA function_def_arg)*) | ())  RPAREN
+//					LBRACE
+//						(operation)*
+//					RBRACE SEMI;
+function_def		: (AT ID LPAREN function_def_arg (COMA function_def_arg)* RPAREN
 					LBRACE
 						(operation)*
-					RBRACE SEMI;
+					RBRACE SEMI) |
+					(AT ID LPAREN  RPAREN
+					LBRACE
+						(operation)*
+					RBRACE SEMI);
+
 
 function_call		: (ID  LPAREN function_call_arg (COMA function_call_arg)* RPAREN)
 					| (ID LPAREN RPAREN);

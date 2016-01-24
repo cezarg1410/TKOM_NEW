@@ -7,13 +7,14 @@ import execution.Executor;
 
 public class IFOperation extends Operation{
 
-	public IFOperation()
+	public IFOperation(int line)
 	{
 		thenOperations = new LinkedList<>();
 		elseOperations = new LinkedList<>();
 		conditions = new ArrayList<>();
 		operators = new ArrayList<>();
 		scores = new ArrayList<>();
+		this.line = line;
 	}	
 	
 	private LinkedList<Operation> thenOperations;
