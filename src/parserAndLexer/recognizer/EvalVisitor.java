@@ -120,8 +120,9 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitFunction_call(Function_callContext ctx) {
-
-		helper.visitFunctionCall(ctx,exec.getOperations());
+		//if(ctx.getParent().equals(obj))
+		if(!(ctx.parent instanceof Numerical_var_decContext))
+			helper.visitFunctionCall(ctx,exec.getOperations());
 		return super.visitFunction_call(ctx);
 	}
 

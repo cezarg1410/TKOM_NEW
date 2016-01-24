@@ -21,7 +21,9 @@ import operations.LogicalOperator;
 import operations.LoopOperation;
 import operations.NumberDeclarationOperation;
 import operations.Operation;
+import operations.ReturnOperation;
 import operations.arguments.Argument;
+import operations.arguments.FunCallArgument;
 import operations.arguments.ListArgument;
 import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.NumberArgument;
@@ -37,6 +39,7 @@ import parserAndLexer.ListLanguageParser.List_var_decContext;
 import parserAndLexer.ListLanguageParser.LoopContext;
 import parserAndLexer.ListLanguageParser.Numerical_var_decContext;
 import parserAndLexer.ListLanguageParser.OperationContext;
+import parserAndLexer.ListLanguageParser.Return_opContext;
 import parserAndLexer.ListLanguageParser.ValueContext;
 import utils.Utils;
 
@@ -51,7 +54,7 @@ public class Helper {
 
 	public void visitAssignment(AssignmentContext ctx, List<Operation> container)
 	{
-		String id = ctx.ID().toString();
+		String id = ctx.ID(0).toString();
 		if(ctx.list() != null)
 		{
 			ArrayList<Integer> content = new ArrayList<>();
@@ -71,9 +74,21 @@ public class Helper {
 			Integer val = Integer.parseInt(ctx.NUMBER().toString());
 			container.add(new AssignmentOperation(id,new NumberElement(val)));
 		}
-		else 
+		else if(ctx.ID().size() > 0 && ctx.ID().get(1) != null) 
 		{
-			//TODO function_call
+			VariableArgument va = new VariableArgument(ctx.ID(0).toString());
+			container.add(new AssignmentOperation(id,va));
+		}
+		
+		else if(ctx.function_call() != null)
+		{
+			FunCallArgument fc = new FunCallArgument(ctx.function_call().ID().toString());
+			for (int i = 0 ; i < ctx.function_call().function_call_arg().size() ; i++)
+			{
+				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i));
+				fc.getArgs().add(arg);
+			}
+			container.add(new AssignmentOperation(id, fc));
 		}
 	}
 	
@@ -89,9 +104,17 @@ public class Helper {
 		{
 			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString(),container);	
 		}
-		else
+		else if(ctx.function_call() != null)
 		{
-			//TODO function_call
+			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call());
+			for( int  i = 0 ; i<ctx.function_call().function_call_arg().size() ; i++)
+			{
+				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i).children.get(0));
+				fc.getArgs().add(arg);
+			}
+			container.add(new NumberDeclarationOperation(id,fc));
+			return;
+			
 		}
 		container.add(new NumberDeclarationOperation(id,val));
 	}
@@ -277,7 +300,11 @@ public class Helper {
 		}
 		else if(ctx.loop() != null)
 		{
-			
+			visitLoop(ctx.loop(), container);
+		}
+		else if(ctx.return_op() != null)
+		{
+			visitReturn(ctx.return_op(),container);
 		}
 		else if(ctx.function_call() != null)
 		{
@@ -286,6 +313,13 @@ public class Helper {
 		else
 			throw new RuntimeException();
 		
+	}
+
+	private void visitReturn(Return_opContext return_op, List<Operation> container) {
+		ReturnOperation ro = new ReturnOperation();
+		Argument arg = Utils.getArgument(return_op.return_arg().getChild(0));
+		ro.setRetArg(arg);
+		container.add(ro);
 	}
 
 	public void visitFunctionCall(Function_callContext ctx, List<Operation> container) {
@@ -314,7 +348,7 @@ public class Helper {
 		container.add(fc);
  	}
 
-	public void visitLoop(LoopContext ctx, LinkedList<Operation> operations) {
+	public void visitLoop(LoopContext ctx, List<Operation> operations) {
 		Argument arg = Utils.getArgument(ctx.value());
 		LoopOperation lo = new LoopOperation(arg);
 		

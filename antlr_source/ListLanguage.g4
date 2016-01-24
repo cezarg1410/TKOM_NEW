@@ -49,9 +49,9 @@ WS					: 	[ \t\n\r]+ ->skip;
 
 compilation_unit 	: function_defs PROGRAM LBRACE operation* RBRACE SEMI;
 function_defs		:  FUNCTIONS LBRACE function_def* RBRACE SEMI;
-assignment			: ID ASSIGN (list | list_element | NUMBER | function_call);
+assignment			: ID ASSIGN (list | list_element | NUMBER | function_call | ID);
 operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment;
-return_op:			RETURN return_arg  ;
+return_op:			RETURN return_arg  SEMI;
 
 numerical_var_dec 	: NUMERICAL_VAR_OP  ID  ASSIGN  (NUMBER | function_call | list_element) SEMI;
 list_var_dec 		: (LIST_VAR_OP  ID  ASSIGN  list  SEMI) | (LIST_VAR_OP ID ASSIGN function_call SEMI) ;
@@ -88,15 +88,10 @@ elementary_condition :
 					| (function_call LOGICAL_OPERATOR list)
 					| (list LOGICAL_OPERATOR function_call)
 					| (list LOGICAL_OPERATOR list);								
-function_def		: (AT ID  LPAREN  function_def_arg (COMA function_def_arg)*  RPAREN 
+function_def		: AT ID  LPAREN  ((function_def_arg (COMA function_def_arg)*) | ())  RPAREN
 					LBRACE
 						(operation)*
-					RBRACE SEMI)
-					|
-					(AT ID  LPAREN  RPAREN 
-					LBRACE
-						(operation)*
-					RBRACE SEMI);
+					RBRACE SEMI;
 
 function_call		: (ID  LPAREN function_call_arg (COMA function_call_arg)* RPAREN)
 					| (ID LPAREN RPAREN);
@@ -105,4 +100,4 @@ function_def_arg:  ((NUMERICAL_VAR_OP  ID) | (LIST_VAR_OP  ID));
 function_call_arg :	list | value | ID | function_call;
 loop				: LOOP  LPAREN  value RPAREN  LBRACE  operation *  RBRACE SEMI;
 
-return_arg			: ID;
+return_arg			: ID | value | list | function_call;

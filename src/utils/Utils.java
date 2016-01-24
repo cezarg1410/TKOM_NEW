@@ -9,6 +9,7 @@ import elements.Element;
 import elements.ListElement;
 import elements.NumberElement;
 import execution.Executor;
+import operations.FunctionCall;
 import operations.arguments.Argument;
 import operations.arguments.FunCallArgument;
 import operations.arguments.ListArgument;
@@ -26,7 +27,7 @@ public class Utils {
 		Element<?> elem = null;
 		if(arg instanceof FunCallArgument)
 		{
-			//TODO fun_call
+			elem = exec.callOuterFunction((FunCallArgument)arg);
 		}
 		else if(arg instanceof ListArgument)
 		{
@@ -80,10 +81,12 @@ public class Utils {
 				
 			}
 		}
-		else {
-			return null;
-			//TODO function_call
+		else if (parseTree instanceof Function_callContext){
+			
+			Function_callContext fc = (Function_callContext) parseTree;
+			return new FunCallArgument(fc.ID().toString());
 		}
+		else throw new RuntimeException();
 	}
 	public static Argument getFunCallArgument(Function_callContext ctx)
 	{

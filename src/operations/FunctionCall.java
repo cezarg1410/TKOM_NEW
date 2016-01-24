@@ -25,6 +25,7 @@ public class FunctionCall extends Operation {
 	private HashMap<String, Element<?>> localVariables;
 	private FunctionDefinition fd;
 	private LinkedList<Operation> operations;
+	private Element<?> ret;
 	
 	public FunctionCall(FunctionDefinition fd,String id)
 	{
@@ -46,6 +47,12 @@ public class FunctionCall extends Operation {
 		createLocalVariables(exec);
 		for(Operation o : operations)
 		{
+			if(o instanceof ReturnOperation)
+			{
+				o.perform(exec);
+				ret = ((ReturnOperation) o).getRetValue();
+				break;
+			}
 			o.perform(exec);
 		}
 		exec.getCalledFunctions().removeFirst();
@@ -100,4 +107,12 @@ public class FunctionCall extends Operation {
 		this.args = args;
 	}
 
+	public Element<?> getRet() {
+		return ret;
+	}
+
+	public void setRet(Element<?> ret) {
+		this.ret = ret;
+	}
+	
 }

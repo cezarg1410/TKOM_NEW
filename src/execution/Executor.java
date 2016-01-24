@@ -11,6 +11,7 @@ import elements.ListElement;
 import elements.NumberElement;
 import operations.FunctionCall;
 import operations.Operation;
+import operations.arguments.FunCallArgument;
 
 public class Executor {
 	
@@ -86,7 +87,7 @@ public class Executor {
 		Element<?> res = null;
 		if(calledFunctions.size() !=0)
 		{
-			res = calledFunctions.getLast().getLocalVariables().get(id);
+			res = calledFunctions.getFirst().getLocalVariables().get(id);
 		}
 		if(res == null)
 			res = getGlobalVariables().get(id);
@@ -110,6 +111,14 @@ public class Executor {
 	public Integer getIntegerFromListIndex(String id, Integer index)
 	{	
 		return getListElement(id).getContent().get(index);	
+	}
+	
+	public Element<?> callOuterFunction(FunCallArgument arg)
+	{
+		FunctionCall fc = new FunctionCall(functions.get(arg.getFuncId()),arg.getFuncId());
+		fc.setArgs(arg.getArgs());
+		fc.perform(this);
+		return fc.getRet();
 	}
 
 }

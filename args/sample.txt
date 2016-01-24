@@ -12,7 +12,7 @@ FUNCTIONS
 			number z = 6;
 		};
 	
-	
+		return 12;
 	};
 };
 PROGRAM
@@ -21,7 +21,7 @@ PROGRAM
 
 	
 	number c = 3;
-	sampleFunction(a,{2,3,4});
+	number b = sampleFunction(a,{2,3,4});
 };
 
 
