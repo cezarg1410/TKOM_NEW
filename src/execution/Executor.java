@@ -20,7 +20,6 @@ import operations.ArithmeticalOperator;
 import operations.FunctionCall;
 import operations.Operation;
 import operations.arguments.Argument;
-import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
 import parserAndLexer.ListLanguageLexer;
 import parserAndLexer.ListLanguageParser;
@@ -64,20 +63,19 @@ public class Executor {
 			run();
 			print();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			Log.log(e.toString());
 		}
 		catch(FunctionExecExcetpion e)
 		{
-			e.printStackTrace();
+			Log.log(e.toString());
 		}
 		catch(RuntimeException e)
 		{
-			e.printStackTrace();
+			Log.log(e.toString());
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			Log.log(e.toString());
 		}
 		
 	}

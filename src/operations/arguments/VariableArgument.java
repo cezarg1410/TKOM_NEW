@@ -4,7 +4,6 @@ public class VariableArgument extends Argument {
 
 	public VariableArgument(String id) {
 		varId = id;
-		readyToUse = false;
 	}
 
 	String varId;

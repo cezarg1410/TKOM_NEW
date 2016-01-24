@@ -10,7 +10,6 @@ import elements.FunctionDefinition;
 import elements.ListElement;
 import elements.NumberElement;
 import execution.Executor;
-import operations.ArithmeticalOperation;
 import operations.ArithmeticalOperator;
 import operations.AssignmentOperation;
 import operations.ElementaryCondition;
@@ -27,7 +26,6 @@ import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
 import operations.arguments.VariableArgument;
 import parserAndLexer.ListLanguageLexer;
-import parserAndLexer.ListLanguageParser.Arithmetic_operationContext;
 import parserAndLexer.ListLanguageParser.AssignmentContext;
 import parserAndLexer.ListLanguageParser.Elementary_conditionContext;
 import parserAndLexer.ListLanguageParser.Function_callContext;
@@ -59,22 +57,30 @@ public class Helper {
 			{
 				content.add(Integer.parseInt(ctx.list().NUMBER(i).toString()));
 			}
-			container.add(new AssignmentOperation(id,new ListElement(content)));
+			AssignmentOperation ao = new AssignmentOperation(id,new ListElement(content));
+			ao.setStart(ctx.start.getLine());
 		}
 		else if (ctx.list_element() != null)
 		{
 			Integer val = getListElement(ctx.list_element().ID().toString(), ctx.list_element().NUMBER().toString(),container);
-			container.add(new AssignmentOperation(id,new NumberElement(val)));
+			AssignmentOperation ao = new AssignmentOperation(id,new NumberElement(val));
+			ao.setStart(ctx.start.getLine());
+			container.add(ao);
 		}
 		else if(ctx.NUMBER() != null)
 		{
 			Integer val = Integer.parseInt(ctx.NUMBER().toString());
-			container.add(new AssignmentOperation(id,new NumberElement(val)));
+			AssignmentOperation ao = new AssignmentOperation(id,new NumberElement(val));
+			ao.setStart(ctx.start.getLine());
+			container.add(ao);
 		}
 		else if(ctx.ID().size() > 0 && ctx.ID().get(1) != null) 
 		{
 			VariableArgument va = new VariableArgument(ctx.ID(0).toString());
-			container.add(new AssignmentOperation(id,va));
+			
+			AssignmentOperation ao = new AssignmentOperation(id,va);
+			ao.setStart(ctx.start.getLine());
+			container.add(ao);
 		}
 		
 		else if(ctx.function_call() != null)
@@ -85,7 +91,9 @@ public class Helper {
 				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i));
 				fc.getArgs().add(arg);
 			}
-			container.add(new AssignmentOperation(id, fc));
+			AssignmentOperation ao = new AssignmentOperation(id, fc);
+			ao.setStart(ctx.start.getLine());
+			container.add(ao);
 		}
 	}
 	
@@ -104,26 +112,27 @@ public class Helper {
 		else if(ctx.function_call() != null)
 		{
 			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call());
-//			for( int  i = 0 ; i<ctx.function_call().function_call_arg().size() ; i++)
-//			{
-//				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i).children.get(0));
-//				fc.getArgs().add(arg);
-//			}
-			container.add(new NumberDeclarationOperation(id,fc));
+			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,fc);
+			nd.setStart(ctx.start.getLine());
+			container.add(nd);
 			return;
 			
 		}
 		else if(ctx.arithmetic_operation() != null)
 		{
-			//ArithmeticalOperation ao = new ArithmeticalOperation();
 			ArithmeticalArgument aa = new ArithmeticalArgument();
 			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(0)));
 			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(2)));
 			aa.setOperator(ArithmeticalOperator.fromString(ctx.arithmetic_operation().getChild(1).toString()));
-			container.add(new NumberDeclarationOperation(id,aa));
+			
+			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,aa);
+			nd.setStart(ctx.start.getLine());
+			container.add(nd);
 			return;
 		}
-		container.add(new NumberDeclarationOperation(id,val));
+		NumberDeclarationOperation nd = new NumberDeclarationOperation(id,val);
+		nd.setStart(ctx.start.getLine());
+		container.add(nd);
 	}
 	
 	
@@ -134,7 +143,7 @@ public class Helper {
 		{
 			ListElement e = (ListElement) exec.getGlobalVariables().get(id);
 			if(e == null)
-				throw new RuntimeException("Brak listy");
+				throw new RuntimeException("Brak listy o id: "+id);
 			else
 				return e.getContent().get(Integer.parseInt(number));
 		}
@@ -160,15 +169,14 @@ public class Helper {
 		else
 		{
 			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call());
-//			for( int  i = 0 ; i<ctx.function_call().function_call_arg().size() ; i++)
-//			{
-//				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i).children.get(0));
-//				fc.getArgs().add(arg);
-//			}
-			container.add(new ListDeclarationOperation(id,fc));
+			ListDeclarationOperation ld = new ListDeclarationOperation(id,fc);
+			ld.setStart(ctx.getStart().getLine());
+			container.add(ld);
 			return;
 		}
-		container.add(new ListDeclarationOperation(id,content));
+		ListDeclarationOperation ld = new ListDeclarationOperation(id,content);
+		ld.setStart(ctx.getStart().getLine());
+		container.add(ld);
 	}
 	
 	public void evalIfStatemntOperation(OperationContext op, List<Operation> container)
@@ -188,8 +196,8 @@ public class Helper {
 			ElementaryCondition ec = new ElementaryCondition(firstArg,lo,secondArg); 
 			oper.getConditions().add(ec);
 		}
-		String and = ListLanguageLexer.VOCABULARY.getLiteralName(26).toString().substring(1, 3);
-		String or = ListLanguageLexer.VOCABULARY.getLiteralName(27).toString().substring(1, 4);
+		String and = ListLanguageLexer.VOCABULARY.getLiteralName(25).toString().substring(1, 3);
+		String or = ListLanguageLexer.VOCABULARY.getLiteralName(26).toString().substring(1, 4);
 		for(ParseTree t :ctx.condition().children)
 		{
 			if(t instanceof TerminalNode ){
@@ -200,28 +208,22 @@ public class Helper {
 			}
 		}
 		evalIfStatementOperations(ctx,oper,container);
-		
-		container.add(oper);	
-		
+		container.add(oper);		
 	}
-	
 
 	public void evalIfStatementOperations(If_statementContext ctx, IFOperation oper, List<Operation> container)
 	{
 		for(OperationContext op : ctx.then_block().operation())
 		{
 			evalIfStatemntOperation(op,oper.getThenOperations());
-			//oper.getThenOperations().add(evalIfStatemntOperation(op,container));
 		}
 		if(ctx.else_block() != null)
 		{
 			for(OperationContext op : ctx.else_block().operation())
 			{
 				evalIfStatemntOperation(op, oper.getElseOperations());
-				//oper.getElseOperations().add(evalIfStatemntOperation(op,container));
 			}
 		}
-		
 	}
 
 	public void createFunctionDefinition(Function_defContext ctx, List<Operation> container) {
@@ -237,10 +239,7 @@ public class Helper {
 			createAndGetOperation(ctx.operation(i),fc.getOperations());
 		}
 		exec.getFunctions().put(id, fc);
-		
 	}
-	
-	
 	
 	public void createAndGetOperation(OperationContext ctx, List<Operation> container)
 	{
@@ -268,28 +267,32 @@ public class Helper {
 		{
 			visitFunctionCall(ctx.function_call(), container);
 		}
-		else if(ctx.arithmetic_operation() != null)
+		else if(ctx.assignment() != null)
 		{
-			visitArithmeticOperation(ctx.arithmetic_operation(),container);
+			visitAssignment(ctx.assignment(), container);
 		}
+//		else if(ctx.arithmetic_operation() != null)
+//		{
+//			visitArithmeticOperation(ctx.arithmetic_operation(),container);
+//		}
 		else
-			throw new RuntimeException();
+			throw new RuntimeException("Nie ma takiej operacji. Linia: "+ctx.getStart().getLine());
 		
 	}
 
-	@SuppressWarnings("unused")
-	private void visitArithmeticOperation(Arithmetic_operationContext ctx, List<Operation> container) {
-		ArithmeticalOperation ao = new ArithmeticalOperation();
-		Argument left = Utils.getArgument(ctx.getChild(0));
-		Argument right = Utils.getArgument(ctx.getChild(2));
-		ArithmeticalOperator op = ArithmeticalOperator.fromString(ctx.getChild(1).toString());
-		
-	}
+
+//	private void visitArithmeticOperation(Arithmetic_operationContext ctx, List<Operation> container) {
+//		ArithmeticalOperation ao = new ArithmeticalOperation();
+//		Argument left = Utils.getArgument(ctx.getChild(0));
+//		Argument right = Utils.getArgument(ctx.getChild(2));
+//		ArithmeticalOperator op = ArithmeticalOperator.fromString(ctx.getChild(1).toString());		
+//	}
 
 	private void visitReturn(Return_opContext return_op, List<Operation> container) {
 		ReturnOperation ro = new ReturnOperation();
 		Argument arg = Utils.getArgument(return_op.return_arg().getChild(0));
 		ro.setRetArg(arg);
+		ro.setStart(return_op.getStart().getLine());
 		container.add(ro);
 	}
 
@@ -302,21 +305,10 @@ public class Helper {
 		{
 			fc.getArgs().add(Utils.getArgument(ctx.function_call_arg(i).children.get(0)));
 		}
-		
-		
-//		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
-//		{
-//			args.add(ctx.function_call_arg(i).ID().toString());
-//		}
-//		for(int i = 0 ; i < ctx.function_call_arg().size() ; i++)
-//		{
-//			fc.getArgs().add(Utils.getArgument(ctx.function_call_arg(i)));
-//		}
-//		
-		
+		fc.setStart(ctx.getStart().getLine());
 		container.add(fc);
  	}
-
+	
 	public void visitLoop(LoopContext ctx, List<Operation> operations) {
 		Argument arg = Utils.getArgument(ctx.value());
 		LoopOperation lo = new LoopOperation(arg);
@@ -325,11 +317,5 @@ public class Helper {
 		{
 			createAndGetOperation(ctx.operation(i),lo.getOperations());
 		}
-		
-		
 	}
-	
-	
-
-	
 }

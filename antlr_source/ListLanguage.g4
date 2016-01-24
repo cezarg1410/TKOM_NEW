@@ -49,7 +49,7 @@ WS					: 	[ \t\n\r]+ ->skip;
 compilation_unit 	: function_defs program;
 program				: PROGRAM LBRACE operation* RBRACE SEMI;
 function_defs		:  FUNCTIONS LBRACE function_def* RBRACE SEMI;
-assignment			: ID ASSIGN (arithmetic_operation | list | list_element | NUMBER | function_call | ID);
+assignment			: ID ASSIGN (arithmetic_operation | list | list_element | NUMBER | function_call | ID) SEMI;
 operation			: numerical_var_dec | list_var_dec | (function_call SEMI) | function_def | if_statement | loop | return_op | assignment | arithmetic_operation;
 arithmetic_operation : (ID | value | list | function_call) ACTION_OPERATOR (ID | value | list | function_call);
 return_op:			RETURN return_arg  SEMI;
@@ -98,7 +98,7 @@ function_call		: (ID  LPAREN function_call_arg (COMA function_call_arg)* RPAREN)
 					| (ID LPAREN RPAREN);
 		
 function_def_arg:  ((NUMERICAL_VAR_OP  ID) | (LIST_VAR_OP  ID));
-function_call_arg :	list | value | ID | function_call;
+function_call_arg :	list | value | ID | function_call | arithmetic_operation;
 loop				: LOOP  LPAREN  value RPAREN  LBRACE  operation *  RBRACE SEMI;
 
 return_arg			: arithmetic_operation | ID | value | list | function_call;

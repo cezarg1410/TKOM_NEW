@@ -53,7 +53,6 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		return super.visitNumerical_var_dec(ctx);
 	}
 
-
 	@Override
 	public Integer visitList_var_dec(List_var_decContext ctx) 
 	{
@@ -82,7 +81,6 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		return super.visitElementary_condition(ctx);
 	}
 
-
 	@Override
 	public Integer visitFunction_call(Function_callContext ctx) {
 		if(!shouldAddToOperations(ctx))
@@ -98,10 +96,8 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 		return super.visitLoop(ctx);
 	}
 
-
 	@Override
 	public Integer visitErrorNode(ErrorNode node) {
 		throw new ParsingException(node.toString());
-		//return super.visitErrorNode(node);
 	}
 }

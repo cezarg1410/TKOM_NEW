@@ -6,7 +6,6 @@ public class ListArgument extends Argument {
 
 	public ListArgument(ArrayList<Integer> list) {
 		this.content = list;
-		readyToUse = true;
 	}
 	private ArrayList<Integer> content;
 	

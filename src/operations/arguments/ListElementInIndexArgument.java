@@ -8,7 +8,6 @@ public class ListElementInIndexArgument extends Argument {
 	public ListElementInIndexArgument(String string, int parseInt) {
 		id = string;
 		index = parseInt;
-		readyToUse = false;
 	}
 	
 	public String getId() {
