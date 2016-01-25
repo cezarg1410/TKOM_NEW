@@ -21,7 +21,6 @@ import operations.LoopOperation;
 import operations.NumberDeclarationOperation;
 import operations.Operation;
 import operations.ReturnOperation;
-import operations.StopOperation;
 import operations.arguments.Argument;
 import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
