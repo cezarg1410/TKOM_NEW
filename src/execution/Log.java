@@ -14,6 +14,8 @@ public class Log {
 	private static FileHandler fileHandler;
 	private static String fileStr;
 	private static final String EXT = ".txt";
+	private static final String FILE = "./txt/";
+	private static String createdStr;
 
 	Log(Boolean toFile, Boolean toConsole, String destPath) throws SecurityException, IOException
 	{
@@ -30,8 +32,13 @@ public class Log {
 		{
 			fileStr = destPath;
 			if(fileStr == null)
-				fileStr = createFileName();
-			fileHandler = new FileHandler(fileStr+EXT);
+			{
+				createdStr = FILE + createFileName();
+				fileHandler = new FileHandler(createdStr + EXT);
+			}
+			else
+				fileHandler = new FileHandler(fileStr);
+			
 			fileHandler.setFormatter(new SimpleFormatter());
 			logger.addHandler(fileHandler);
 		}
@@ -59,8 +66,16 @@ public class Log {
 	
 	public static void logStack(Exception e)
 	{
-		
-		File file = new File(fileStr+"_STACK_TRACE_"+EXT);
+		String fileName;
+		if(fileStr != null)
+		{
+			fileName = fileStr;
+		}
+		else
+		{
+			fileName = createdStr + "_STACK_TRACE_" + EXT;
+		}
+		File file = new File(fileName);
 		
 		try (PrintStream ps = new PrintStream(file)){	
 			e.printStackTrace(ps);

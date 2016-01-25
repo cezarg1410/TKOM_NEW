@@ -16,7 +16,7 @@ public class Main {
 	    CmdLineParser.Option logToConsole    	= parser.addBooleanOption('c', "Logowanie do konsoli");
 	    CmdLineParser.Option logStackTrace      = parser.addBooleanOption('t', "Logowanie stackTrace");
        	CmdLineParser.Option sourcePath  		= parser.addStringOption ('s', "Ścieżka do pliku z kodem źródłowym");
-       	CmdLineParser.Option destPath      		= parser.addStringOption('w', "Ścieżka do pliku wynikowego (Domyślnie w formacie data,czas)");
+       	CmdLineParser.Option destPath      		= parser.addStringOption('w', "Ścieżka do pliku wynikowego (Domyślnie: ./txt/data_czas)");
        	CmdLineParser.Option helpOpt          	= parser.addBooleanOption('h', "Pomoc");
         try {
     			parser.parse(args);
