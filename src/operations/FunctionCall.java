@@ -105,7 +105,8 @@ public class FunctionCall extends Operation {
 			}
 			else if(args.get(i) instanceof FunCallArgument)
 			{
-				//TODO
+				FunCallArgument fc = (FunCallArgument) args.get(i);
+				int a =2;
 			}
 		}
 	}

@@ -81,7 +81,7 @@ public class Helper {
 			FunCallArgument fc = new FunCallArgument(ctx.function_call().ID().toString(),ctx.start.getLine());
 			for (int i = 0 ; i < ctx.function_call().function_call_arg().size() ; i++)
 			{
-				Argument arg = Utils.getArgument(ctx.function_call(),ctx.start.getLine());
+				Argument arg = Utils.getArgument(ctx.function_call().function_call_arg(i).children.get(0),ctx.start.getLine());
 				fc.getArgs().add(arg);
 			}
 			AssignmentOperation ao = new AssignmentOperation(id, fc,ctx.start.getLine());
