@@ -88,7 +88,30 @@ public class Helper {
 
 			container.add(ao);
 		}
-		else if(ctx.ID().size() > 0 && ctx.ID().get(1) != null) 
+		else if(ctx.arithmetic_operation() != null)
+		{
+			ArithmeticalArgument aa = new ArithmeticalArgument(ctx.start.getLine());
+			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(0),ctx.start.getLine()));
+			aa.getArgs().add(Utils.getArgument(ctx.arithmetic_operation().getChild(2),ctx.start.getLine()));
+			aa.setOperator(ArithmeticalOperator.fromString(ctx.arithmetic_operation().getChild(1).toString()));
+			
+			AssignmentOperation ao = new AssignmentOperation(id,aa,ctx.start.getLine());
+			container.add(ao);
+			
+//			if(exec.getVar(id, ctx.start.getLine()) instanceof ListElement)
+//			{
+//				ListDeclarationOperation ld = new ListDeclarationOperation(id,aa);
+//				container.add(ld);
+//			}
+//			else
+//			{
+//				NumberDeclarationOperation nd = new NumberDeclarationOperation(id,aa,ctx.start.getLine());
+//				container.add(nd);
+//			}
+//		
+			return;
+		}
+		else if(ctx.ID().size() > 0 && ctx.ID().get(0) != null) 
 		{
 			VariableArgument va = new VariableArgument(ctx.ID(0).toString(),ctx.start.getLine());
 			
@@ -171,10 +194,17 @@ public class Helper {
 				content.add(Integer.parseInt(ctx.list().NUMBER(i).toString()));
 			}		
 		}
-		else
+		else if(ctx.function_call() != null)
 		{
 			FunCallArgument fc = (FunCallArgument) Utils.getArgument(ctx.function_call(),ctx.start.getLine());
 			ListDeclarationOperation ld = new ListDeclarationOperation(id,fc);
+			container.add(ld);
+			return;
+		}
+		else if(ctx.arithmetic_operation() != null)
+		{
+			ArithmeticalArgument aa = (ArithmeticalArgument) Utils.getArgument(ctx.arithmetic_operation(), ctx.start.getLine());
+			ListDeclarationOperation ld = new ListDeclarationOperation(id,aa);
 			container.add(ld);
 			return;
 		}

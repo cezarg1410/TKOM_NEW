@@ -45,7 +45,7 @@ public class ArithmeticalOperation extends Operation {
 				}
 				ret = new ListElement(res,line);
 			}
-			if(left instanceof NumberElement && right instanceof NumberElement)
+			else if(left instanceof NumberElement && right instanceof NumberElement)
 			{
 				NumberElement l = (NumberElement) left;
 				NumberElement r = (NumberElement) right;
@@ -70,7 +70,7 @@ public class ArithmeticalOperation extends Operation {
 				}
 				ret = new ListElement(res,line);
 			}
-			if(left instanceof NumberElement && right instanceof NumberElement)
+			else if(left instanceof NumberElement && right instanceof NumberElement)
 			{
 				NumberElement l = (NumberElement) left;
 				NumberElement r = (NumberElement) right;

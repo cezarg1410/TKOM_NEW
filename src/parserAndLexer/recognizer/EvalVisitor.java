@@ -92,7 +92,8 @@ public class EvalVisitor extends ListLanguageBaseVisitor<Integer> {
 
 	@Override
 	public Integer visitLoop(LoopContext ctx) {
-		helper.visitLoop(ctx,exec.getOperations());
+		if(shouldAddToOperations(ctx))
+			helper.visitLoop(ctx,exec.getOperations());
 		return super.visitLoop(ctx);
 	}
 

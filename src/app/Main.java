@@ -4,13 +4,9 @@ import execution.Executor;
 import jargs.gnu.CmdLineParser;
 
 public class Main {
-
-
 	
-
 	public static void main(String[] args) {
 	
-		
 		CmdLineParser parser = new CmdLineParser();
 	    CmdLineParser.Option logToFile     		= parser.addBooleanOption('l', "Logowanie do pliku");
 	    CmdLineParser.Option logToConsole    	= parser.addBooleanOption('c', "Logowanie do konsoli");
@@ -19,7 +15,7 @@ public class Main {
        	CmdLineParser.Option destPath      		= parser.addStringOption('w', "Ścieżka do pliku wynikowego (Domyślnie: ./txt/data_czas)");
        	CmdLineParser.Option helpOpt          	= parser.addBooleanOption('h', "Pomoc");
         try {
-    			parser.parse(args);
+    		parser.parse(args);
     	} 
         catch (CmdLineParser.OptionException e) 
         {
