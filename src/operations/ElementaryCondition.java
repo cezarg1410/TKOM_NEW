@@ -7,11 +7,6 @@ import elements.ListElement;
 import elements.NumberElement;
 import execution.Executor;
 import operations.arguments.Argument;
-import operations.arguments.FunCallArgument;
-import operations.arguments.ListArgument;
-import operations.arguments.ListElementInIndexArgument;
-import operations.arguments.NumberArgument;
-import operations.arguments.VariableArgument;
 import utils.Utils;
 
 public class ElementaryCondition {

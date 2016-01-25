@@ -11,6 +11,7 @@ import execution.Executor;
 import execution.Log;
 import execution.exceptions.FunctionExecExcetpion;
 import operations.arguments.Argument;
+import operations.arguments.VariableArgument;
 import utils.Utils;
 
 public class BuildInFunction {
@@ -240,6 +241,13 @@ public class BuildInFunction {
 		if(args.size() != 1)
 			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji print. LINIA: "+line);
 		Element<?> elem = Utils.calcArgument(args.get(0), exec,line);
-		Log.log(elem.toString());
+		String id = null;
+		if(args.get(0) instanceof VariableArgument)
+		{
+			VariableArgument va = (VariableArgument) args.get(0);
+			id = va.getVarId();
+		}
+		String msg = id==null ? ("LINIA: "+ line + " " + elem.toString()) : ("LINIA: "+ line + " " + " ID: " + id + ". " +  elem.toString()) ;
+		Log.log(msg);
 	}
 }

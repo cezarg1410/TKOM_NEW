@@ -10,7 +10,6 @@ import elements.ListElement;
 import elements.NumberElement;
 import execution.Executor;
 import operations.ArithmeticalOperator;
-import operations.FunctionCall;
 import operations.arguments.Argument;
 import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;

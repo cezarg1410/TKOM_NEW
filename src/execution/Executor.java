@@ -28,27 +28,38 @@ import parserAndLexer.recognizer.Helper;
 
 public class Executor {
 	
-	public static final String SOURCE_PATH = "args/sample.txt";
 	public static final String ENCODING = "UTF-8";
 	private LinkedList<Operation> operations;
 	private LinkedList<FunctionCall> calledFunctions;
 	private HashMap<String, Element<?>> globalVariables;
 	private HashMap<String, FunctionDefinition> functions;
-	public Executor()
+	
+	private String sourcePath;
+	private String destPath;
+	private Boolean toFile;
+	private Boolean toConsole;
+	private Boolean stackTrace;
+	
+	public Executor(String sourcePathStr, String destPathStr, Boolean logToFileBoolean, Boolean logToConsoleBoolean, Boolean logStackTraceBoolean)
 	{
+		
 		operations = new LinkedList<>();
 		calledFunctions = new LinkedList<>();
 		globalVariables = new HashMap<>();
 		functions = new HashMap<>();
-		
+		sourcePath = sourcePathStr;
+		destPath = destPathStr;
+		toFile = logToFileBoolean;
+		toConsole = logToConsoleBoolean;
+		stackTrace = logStackTraceBoolean;
 	}
 	
 	public void initCompilation()
 	{
 		ANTLRFileStream input;
 		try {
-			Log.init();
-			input = new ANTLRFileStream(SOURCE_PATH, ENCODING);
+			Log.init(destPath,toFile,toConsole);
+			input = new ANTLRFileStream(sourcePath, ENCODING);
 			ListLanguageLexer lexer = new ListLanguageLexer(input);	
 			lexer.removeErrorListeners();
 			lexer.addErrorListener(new ErrorListener());
@@ -61,27 +72,34 @@ public class Executor {
 			Helper helper = new Helper(this);
 			new EvalVisitor(parser,this,helper).visit(tree);
 			run();
-			print();
 		} catch (IOException e) {
-			e.printStackTrace();
-			Log.log(e.toString());
+			
+			logErrors(e);
+			System.out.println("Nieprawidłowy plik wejściowy");
 		}
 		catch(FunctionExecExcetpion e)
 		{
-			e.printStackTrace();
-			Log.log(e.toString());
+			logErrors(e);
 		}
 		catch(RuntimeException e)
 		{
-			e.printStackTrace();
-			Log.log(e.toString());
+			logErrors(e);
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
-			Log.log(e.toString());
+			logErrors(e);
 		}
 		
+	}
+	
+	public void logErrors(Exception e)
+	{
+		e.printStackTrace();
+		if(stackTrace != null)
+		{
+			Log.logStack(e);
+		}
+		Log.log(e.toString());
 	}
 	
 	public HashMap<String, Element<?>> getGlobalVariables() {

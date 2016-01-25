@@ -11,7 +11,7 @@ public class ListElement extends Element<ArrayList<Integer>> {
 
 	@Override
 	public String toString() {
-		return "ListElement [id=" + id + ", ids=" + ids + ", content=" + content + "]";
+		return "Typ: Lista. Zawartość: "+ content ;
 	}
 	
 	@Override

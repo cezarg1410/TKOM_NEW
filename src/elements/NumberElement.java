@@ -9,7 +9,7 @@ public class NumberElement extends Element<Integer> {
 
 	@Override
 	public String toString() {
-		return "NumberElement [id=" + id + ", ids=" + ids + ", content=" + content + "]";
+		return "Typ: Liczba. Zawartość: ["+ content + "]";
 	}
 
 }
