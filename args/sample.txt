@@ -17,10 +17,14 @@ PROGRAM
 	list c = {1,2,3,4,10,5,6};
 	list d = {2,4};
 	number e = 3;
-	printf(e);
-
-	
-
+	if(c[1]==2)
+	then
+	{
+		loop(10)
+		{
+			printf(c);
+		};
+	};
 
 };
 

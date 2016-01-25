@@ -34,7 +34,7 @@ WS=27
 'return'=8
 'FUNCTIONS'=9
 'PROGRAM'=10
-'LOOP'=11
+'loop'=11
 '='=16
 '('=17
 ')'=18

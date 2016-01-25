@@ -318,5 +318,6 @@ public class Helper {
 		{
 			createAndGetOperation(ctx.operation(i),lo.getOperations());
 		}
+		operations.add(lo);
 	}
 }

@@ -20,7 +20,7 @@ LIST_VAR_OP			: 	'list';
 RETURN				:   'return';
 FUNCTIONS			:	'FUNCTIONS';
 PROGRAM				:	'PROGRAM';
-LOOP				: 	'LOOP';
+LOOP				: 	'loop';
  
 
 fragment 
@@ -30,7 +30,7 @@ fragment
 ID				 	: 	LETTER+;
 NUMBER 			 	: 	DIGIT+;
 ACTION_OPERATOR  	: 	'+' | '*' | '-' | '/';
-LOGICAL_OPERATOR 	: 	'==' | '!-' | '>' | '>=' | '<' | '<=';
+LOGICAL_OPERATOR 	: 	'==' | '!=' | '>' | '>=' | '<' | '<=';
 ASSIGN			 	: 	'=';
 LPAREN           	: 	'(';
 RPAREN           	: 	')';

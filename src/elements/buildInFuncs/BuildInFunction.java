@@ -58,6 +58,10 @@ public class BuildInFunction {
 		{
 			print(exec,args,line);
 		}
+		else if(id.equals(BuildInFunctionsEnum.sortRev.toString()))
+		{
+			return sortReversing(exec,args,line);
+		}
 		return null;
 		
 	}
@@ -236,6 +240,22 @@ public class BuildInFunction {
 		Collections.sort(res);
 		return new ListElement(res,line);
 	}
+	
+	private static Element<?> sortReversing(Executor exec, ArrayList<Argument> args,int line)
+	{
+		if(args.size() != 1)
+			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji sort. LINIA: "+line);
+		Element<?> list = Utils.calcArgument(args.get(0), exec,line);
+		if(!(list instanceof ListElement))
+			throw new FunctionExecExcetpion("Nieprawidłowa argument funkcji sort. Oczekiwany listy. LINIA: "+line);
+		ListElement le = (ListElement) list;
+		ArrayList<Integer> res = new ArrayList<>();
+		le.getContent().forEach((v)->res.add(v));
+		Collections.sort(res);
+		Collections.reverse(res);
+		return new ListElement(res,line);
+	}
+	
 	private static void print(Executor exec, ArrayList<Argument> args,int line)
 	{
 		if(args.size() != 1)

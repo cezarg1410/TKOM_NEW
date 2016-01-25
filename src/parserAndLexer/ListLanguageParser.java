@@ -42,7 +42,7 @@ public class ListLanguageParser extends Parser {
 
 	private static final String[] _LITERAL_NAMES = {
 		null, "'if'", "'then'", "'else'", "'@'", "'number'", null, "'list'", "'return'", 
-		"'FUNCTIONS'", "'PROGRAM'", "'LOOP'", null, null, null, null, "'='", "'('", 
+		"'FUNCTIONS'", "'PROGRAM'", "'loop'", null, null, null, null, "'='", "'('", 
 		"')'", "'{'", "'}'", "','", "';'", "'['", "']'", "'&&'", "'!&&'"
 	};
 	private static final String[] _SYMBOLIC_NAMES = {
