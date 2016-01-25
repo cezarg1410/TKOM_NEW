@@ -6,6 +6,7 @@ import execution.Executor;
 import operations.arguments.Argument;
 import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
+import operations.arguments.ListElementInIndexArgument;
 
 public class NumberDeclarationOperation extends Operation{
 
@@ -40,7 +41,7 @@ public class NumberDeclarationOperation extends Operation{
 					throw new RuntimeException("Nieprawdiłowy typ przypisywany do zmiennej. LINIA:"+line);
 				var = (Integer)ret.getContent();
 			}
-			else
+			else if (arg instanceof ArithmeticalArgument )
 			{
 				ArithmeticalArgument aa = (ArithmeticalArgument) arg;
 				Element <?> ret = exec.callArithmeticalOperation(aa.getArgs().get(0),aa.getArgs().get(1),aa.getOperator(),line);
@@ -51,6 +52,13 @@ public class NumberDeclarationOperation extends Operation{
 					var = (Integer)ret.getContent();
 				}
 			}
+			else if(arg instanceof ListElementInIndexArgument)
+			{
+				ListElementInIndexArgument le = (ListElementInIndexArgument) arg;
+				var = exec.getIntegerFromListIndex(le.getId(), le.getIndex(), line);
+			}
+			else 
+				throw new RuntimeException("Niepoprawny argument deklaracji zmiennej liczbowej. LINIA:"+line);
 			
 		}
 		

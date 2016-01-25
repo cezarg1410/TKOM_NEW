@@ -24,6 +24,7 @@ import operations.ReturnOperation;
 import operations.arguments.Argument;
 import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
+import operations.arguments.ListElementInIndexArgument;
 import operations.arguments.VariableArgument;
 import parserAndLexer.ListLanguageLexer;
 import parserAndLexer.ListLanguageParser.AssignmentContext;
@@ -107,7 +108,14 @@ public class Helper {
 		}
 		else if(ctx.list_element() != null)
 		{
-			val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString(),container,ctx.start.getLine());	
+			
+			String idS = ctx.list_element().ID().toString();
+			Integer idx = Integer.parseInt(ctx.list_element().NUMBER().toString());
+			ListElementInIndexArgument le = new ListElementInIndexArgument(idS,idx,ctx.start.getLine());
+			NumberDeclarationOperation nd = new NumberDeclarationOperation(id,le,ctx.start.getLine());
+			container.add(nd);
+			return;
+			//val = getListElement(ctx.list_element().ID().toString(),ctx.list_element().NUMBER().toString(),container,ctx.start.getLine());	
 		}
 		else if(ctx.function_call() != null)
 		{
