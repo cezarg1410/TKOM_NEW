@@ -21,6 +21,7 @@ import operations.LoopOperation;
 import operations.NumberDeclarationOperation;
 import operations.Operation;
 import operations.ReturnOperation;
+import operations.StopOperation;
 import operations.arguments.Argument;
 import operations.arguments.ArithmeticalArgument;
 import operations.arguments.FunCallArgument;
@@ -322,9 +323,18 @@ public class Helper {
 //	}
 
 	private void visitReturn(Return_opContext return_op, List<Operation> container) {
-		ReturnOperation ro = new ReturnOperation();
-		Argument arg = Utils.getArgument(return_op.return_arg().getChild(0),return_op.start.getLine());
-		ro.setRetArg(arg);
+		ReturnOperation ro = null;
+		if(return_op.return_arg() != null)
+		{
+			ro = new ReturnOperation(false);
+			Argument arg = Utils.getArgument(return_op.return_arg().getChild(0),return_op.start.getLine());
+			ro.setRetArg(arg);
+		}
+		else
+		{
+			 ro = new ReturnOperation(true);
+		}
+		
 		container.add(ro);
 	}
 

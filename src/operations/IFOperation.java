@@ -29,7 +29,6 @@ public class IFOperation extends Operation{
 		for(ElementaryCondition cond : conditions)
 		{
 			boolean res = cond.eval(exec);
-			System.out.println("WARUNEK LOGICZNY: " +res);
 			scores.add(res);
 
 		}
@@ -48,9 +47,10 @@ public class IFOperation extends Operation{
 					res = res | next;
 			}
 		}
-		System.out.println("WYNIK TO: " + res);
 		this.result = res;
 		execute(exec);
+		scores = new ArrayList<>();
+		operators = new ArrayList<>();
 	}
 
 	public void execute(Executor exec)
@@ -58,12 +58,17 @@ public class IFOperation extends Operation{
 		if(result)
 		{
 			for(Operation o : thenOperations)
+			{
 				o.perform(exec);
+			}
+				
 		}
 		else
 		{
 			for(Operation o : elseOperations)
+			{		
 				o.perform(exec);
+			}
 		}
 	}
 	

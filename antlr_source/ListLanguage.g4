@@ -42,6 +42,7 @@ LBRACK           	: 	'[';
 RBRACK           	:  	']';
 AND_OPERATOR		:  	'&&';
 OR_OPERATOR			:  	'!&&';
+STOP				:	'STOP';
 
 WS					: 	[ \t\n\r]+ ->skip;
 
@@ -60,7 +61,7 @@ operation					: 		numerical_var_dec
 							| assignment 
 							| arithmetic_operation;
 arithmetic_operation 		: (ID | value | list | function_call) ACTION_OPERATOR (ID | value | list | function_call);
-return_op					: RETURN return_arg  SEMI;
+return_op					: RETURN return_arg  SEMI | RETURN SEMI;
 list_var_dec 				: LIST_VAR_OP  ID  ASSIGN  (arithmetic_operation | list | function_call )  SEMI; 
 numerical_var_dec 			: NUMERICAL_VAR_OP  ID  ASSIGN  (arithmetic_operation | NUMBER | function_call | list_element) SEMI;
 list 						: LBRACE NUMBER (COMA NUMBER)* RBRACE;

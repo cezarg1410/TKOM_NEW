@@ -38,6 +38,7 @@ public class AssignmentOperation extends Operation {
 			if(elem != null)
 			{
 				exec.getCalledFunctions().getFirst().getLocalVariables().put(id, var);
+				var = null;
 				return;
 			}
 		}

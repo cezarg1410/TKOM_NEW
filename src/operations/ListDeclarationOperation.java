@@ -71,6 +71,7 @@ public class ListDeclarationOperation extends Operation {
 		{
 			exec.getCalledFunctions().getFirst().getLocalVariables().put(id, l);
 		}
+		var = null;
 		
 	}
 }

@@ -39,7 +39,8 @@ public class Executor {
 	private Boolean toFile;
 	private Boolean toConsole;
 	private Boolean stackTrace;
-	
+	private Integer currentLoop = 0;
+
 	public Executor(String sourcePathStr, String destPathStr, Boolean logToFileBoolean, Boolean logToConsoleBoolean, Boolean logStackTraceBoolean)
 	{
 		
@@ -181,8 +182,10 @@ public class Executor {
 		return elem;
 	}
 	
-	public Integer getIntegerFromListIndex(String id, Integer index,int line)
+	public Integer getIntegerFromListIndex(String id, Integer index,int line) 
 	{	
+		if(index >= getListElement(id,line).getContent().size())
+			throw new RuntimeException("Indeks poza zakresem listy. LINIA: "+line);
 		return getListElement(id,line).getContent().get(index);	
 	}
 	
@@ -201,6 +204,14 @@ public class Executor {
 		ao.setOperator(ap);
 		ao.perform(this);
 		return ao.getRet();
+	}
+	
+	public Integer getCurrentLoop() {
+		return currentLoop;
+	}
+
+	public void setCurrentLoop(Integer currentLoop) {
+		this.currentLoop = currentLoop;
 	}
 
 }

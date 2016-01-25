@@ -7,8 +7,13 @@ import utils.Utils;
 
 public class ReturnOperation extends Operation {
 
+	public ReturnOperation(Boolean empty)
+	{
+		this.empty = empty;
+	}
 	Element<?> retValue;
 	Argument retArg;
+	public Boolean empty;
 	
 	public Element<?> getRetValue() {
 		return retValue;
@@ -28,7 +33,8 @@ public class ReturnOperation extends Operation {
 
 	@Override
 	public void perform(Executor exec) {
-		
+		if(empty)
+			return;
 		retValue = Utils.calcArgument(retArg, exec, line);
 		if(exec.getCalledFunctions().size() != 0)
 		{

@@ -39,6 +39,10 @@ public class FunctionCall extends Operation {
 			operations = fd.getOperations();
 		this.line = line;
 	}
+	public FunctionCall()
+	{
+		
+	}
 	
 	public void perfromWhenBuildIn(Executor exec)
 	{
@@ -54,6 +58,13 @@ public class FunctionCall extends Operation {
 	public void perform(Executor exec) {
 		for(int i = 0 ; i < BuildInFunctionsEnum.values().length ; i++)
 		{
+			if(id.equals(BuildInFunctionsEnum.getCurrentLoop.toString()))
+			{
+				if(exec.getCurrentLoop().equals(Integer.valueOf(-1)))
+					throw new RuntimeException("NIeprawidłowa funkcja. LINIA: "+line);
+				ret = new NumberElement(exec.getCurrentLoop(),line);
+				return;
+			}
 			if(id.equals(BuildInFunctionsEnum.values()[i].toString()))
 			{
 				perfromWhenBuildIn(exec);

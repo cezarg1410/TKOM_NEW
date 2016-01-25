@@ -1,28 +1,35 @@
 FUNCTIONS
 {
-	@secondFun(number e)
+	@fun(list a , list b)
 	{
-		number res = 1;	
-		if(e == 2)
+		number z = a[1];
+		number y = b[3];
+		number res = 20;
+		if(res > 15)
 		then
 		{
-		 	res = 6;
-		};
-		else
-		{
-			res = 12;
+			loop(5)
+			{
+				
+			};
 		};
 		return res;
+	
 	};
 };
 
 PROGRAM
 {
-	number z = 1;
-	number r = 3;
-	z = secondFun(r);
-	printf(z);
-
+	list a = {2,3,4,5,6};
+	list b = {12,432,21,54};
+	list c = sublist(a,2,4);
+	loop(15)
+	{
+		number d = getCurrentLoop();
+		append(c,d);
+		return;
+	};
+	printf(c);
 };
 
 
