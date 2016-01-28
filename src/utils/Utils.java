@@ -29,6 +29,7 @@ public class Utils {
 		Element<?> elem = null;
 		if(arg instanceof FunCallArgument)
 		{
+			
 			elem = exec.callOuterFunction((FunCallArgument)arg,line);
 		}
 		else if(arg instanceof ArithmeticalArgument)

@@ -1,35 +1,42 @@
 FUNCTIONS
 {
-	@fun(list a , list b)
+	@funa(list a, list b)
 	{
-		number z = a[1];
-		number y = b[3];
-		number res = 20;
-		if(res > 15)
-		then
-		{
-			loop(5)
-			{
-				
-			};
-		};
-		return res;
-	
+		append(a,a[0]);
+		return a;
+	};
+	@funb(list a, list b)
+	{
+		append(b,a[0]);
+		return b;
+	};
+	@funew(list a, list b)
+	{
+		list c = a+b;
+		return c;
+		
 	};
 };
 
 PROGRAM
 {
-	list a = {2,3,4,5,6};
-	list b = {12,432,21,54};
-	list c = sublist(a,2,4);
-	loop(15)
+	list a = {1};
+	list b = {2,3,4};
+	printf(b);
+	
+	list c  = a*b;
+	
+	loop(50)
 	{
-		number d = getCurrentLoop();
-		append(c,d);
-		return;
+		append(c,getCurrentLoop());
 	};
 	printf(c);
+	c = sort(c);
+	printf(c);
+	c = sortRev(c);
+	printf(c);
+	
+
 };
 
 

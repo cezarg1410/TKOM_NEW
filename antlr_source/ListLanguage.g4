@@ -4,7 +4,7 @@
 grammar ListLanguage;
  
 @header {
-    package parserAndLexer;
+    package antlr_classes;
 }
 
 IF					:	'if';
@@ -41,8 +41,9 @@ SEMI             	: 	';';
 LBRACK           	: 	'[';
 RBRACK           	:  	']';
 AND_OPERATOR		:  	'&&';
-OR_OPERATOR			:  	'!&&';
+OR_OPERATOR			:  	'||';
 STOP				:	'STOP';
+QUOTE				:   '"';
 
 WS					: 	[ \t\n\r]+ ->skip;
 
@@ -63,8 +64,8 @@ operation					: 		numerical_var_dec
 arithmetic_operation 		: (ID | value | list | function_call) ACTION_OPERATOR (ID | value | list | function_call);
 return_op					: RETURN return_arg  SEMI | RETURN SEMI;
 list_var_dec 				: LIST_VAR_OP  ID  ASSIGN  (arithmetic_operation | list | function_call )  SEMI; 
-numerical_var_dec 			: NUMERICAL_VAR_OP  ID  ASSIGN  (arithmetic_operation | NUMBER | function_call | list_element) SEMI;
-list 						: LBRACE NUMBER (COMA NUMBER)* RBRACE;
+numerical_var_dec 			: NUMERICAL_VAR_OP  ID  ASSIGN  (arithmetic_operation | NUMBER | function_call | list_element ) SEMI;
+list 						: (LBRACE RBRACE) | (LBRACE NUMBER (COMA NUMBER)* RBRACE);
 list_element 				: ID  LBRACK  NUMBER  RBRACK ;
 value 						: NUMBER 
 							| list_element;

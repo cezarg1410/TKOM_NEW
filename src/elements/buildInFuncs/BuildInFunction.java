@@ -19,28 +19,23 @@ public class BuildInFunction {
 	public static Element<?> call(Executor exec, ArrayList<Argument> args, String id,int line) {
 		if(id.equals(BuildInFunctionsEnum.append.toString()))
 		{
-			append(exec,args,line);
-			return null;
+			return append(exec,args,line);
 		}
 		else if(id.equals(BuildInFunctionsEnum.appendAt.toString()))
 		{
-			appendAt(exec,args,line);
-			return null;
+			return appendAt(exec,args,line);
 		}
 		else if(id.equals(BuildInFunctionsEnum.delete.toString()))
 		{
-			delete(exec,args,line);
-			return null;
+			return delete(exec,args,line);
 		}
 		else if(id.equals(BuildInFunctionsEnum.deleteAll.toString()))
 		{
-			deleteAll(exec,args,line);
-			return null;
+			return deleteAll(exec,args,line);
 		}
 		else if(id.equals(BuildInFunctionsEnum.deleteFrom.toString()))
 		{
-			deleteFrom(exec,args,line);
-			return null;
+			return deleteFrom(exec,args,line);
 		}
 		else if(id.equals(BuildInFunctionsEnum.sublist.toString()))
 		{
@@ -98,7 +93,7 @@ public class BuildInFunction {
 	}
 
 
-	private static void delete(Executor exec, ArrayList<Argument> args,int line) {
+	private static Element<?> delete(Executor exec, ArrayList<Argument> args,int line) {
 		if(args.size() != 2)
 			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji append. LINIA: "+line);
 		Element<?> first = Utils.calcArgument(args.get(0), exec,line);
@@ -110,9 +105,10 @@ public class BuildInFunction {
 		ListElement list = (ListElement) first;
 		NumberElement val = (NumberElement) second;
 		list.getContent().remove(val.getContent());
+		return list;
 	}
 	
-	private static void deleteFrom(Executor exec, ArrayList<Argument> args,int line) {
+	private static Element<?> deleteFrom(Executor exec, ArrayList<Argument> args,int line) {
 		if(args.size() != 2)
 			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji append. LINIA: "+line);
 		Element<?> first = Utils.calcArgument(args.get(0), exec,line);
@@ -124,10 +120,10 @@ public class BuildInFunction {
 		ListElement list = (ListElement) first;
 		NumberElement val = (NumberElement) second;
 		list.getContent().remove(val.getContent().intValue());
-		
+		return list;
 	}
 	
-	private static void deleteAll(Executor exec, ArrayList<Argument> args,int line)
+	private static Element<?> deleteAll(Executor exec, ArrayList<Argument> args,int line)
 	{
 		if(args.size() != 2)
 			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji append. LINIA: "+line);
@@ -140,11 +136,12 @@ public class BuildInFunction {
 		ListElement list = (ListElement) first;
 		NumberElement val = (NumberElement) second;
 		while(list.getContent().remove(val.getContent())) { }
+		return list;
 
 	}
 	
 
-	public static void append(Executor exec,ArrayList<Argument> args,int line)
+	public static Element<?> append(Executor exec,ArrayList<Argument> args,int line)
 	{
 		if(args.size() != 2)
 			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji append. LINIA: "+line);
@@ -157,11 +154,12 @@ public class BuildInFunction {
 		ListElement list = (ListElement) first;
 		NumberElement val = (NumberElement) second;
 		list.getContent().add(val.getContent());
+		return list;
 		
 	}
 
 
-	private static void appendAt(Executor exec, ArrayList<Argument> args,int line) {
+	private static Element<?> appendAt(Executor exec, ArrayList<Argument> args,int line) {
 		if(args.size() != 3)
 			throw new FunctionExecExcetpion("Nieprawidłowa ilosć argumentów funkcji append. LINIA: "+line);
 		Element<?> first = Utils.calcArgument(args.get(0), exec,line);
@@ -178,6 +176,7 @@ public class BuildInFunction {
 		NumberElement idx = (NumberElement) third;
 		
 		list.getContent().add(idx.getContent(), val.getContent());
+		return list;
 		
 	}
 	private static Element<?> equal(Executor exec, ArrayList<Argument> args,int line)

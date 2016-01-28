@@ -1,1 +1,1 @@
-java -jar antlr4.jar ListLanguage.g4 -no-listener -visitor -o ../src/parserAndLexer/
+java -jar antlr4.jar ListLanguage.g4 -no-listener -visitor -o ../src/antlr_classes/
